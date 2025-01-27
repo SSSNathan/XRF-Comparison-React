@@ -2,7 +2,7 @@
   "name": "instrument-comparison",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://<your-username>.github.io/<your-repo-name>",
+  "homepage": "https://SSSNathan.github.io/XRF-Comparison-React",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
