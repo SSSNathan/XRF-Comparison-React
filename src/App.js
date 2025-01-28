@@ -152,53 +152,69 @@ export default function App() {
   };
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
-        Z-Spec Instrument Sensitivity Comparison
-      </h1>
-      <div className="flex flex-wrap gap-2">
-        {["CustomerSpec", "zMax", "jp500", "eMax500Soil", "eMax500Water"].map((tab) => (
-          <Button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`capitalize ${
-              activeTab === tab ? "text-white" : "bg-gray-100"
-            }`}
-            style={activeTab === tab ? { backgroundColor: "#45038F" } : {}}
-          >
-            {tab
-              .replace(/([A-Z])/g, " $1")
-              .replace(/^./, (str) => str.toUpperCase())
-              .trim()}
-          </Button>
-        ))}
+    <div className="relative min-h-screen pb-24"> {/* Added padding bottom to accommodate footer */}
+      {/* Top Right Corner Image */}
+      <img
+        src="/topRightImage.png" // Ensure the path is correct
+        alt="Top Right"
+        className="absolute top-4 right-4 w-16 h-16 object-contain z-10" // Adjust size as needed
+      />
+
+      <div className="p-6 space-y-4">
+        <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
+          Z-Spec Instrument Sensitivity Comparison
+        </h1>
+        <div className="flex flex-wrap gap-2">
+          {["CustomerSpec", "zMax", "jp500", "eMax500Soil", "eMax500Water"].map((tab) => (
+            <Button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`capitalize ${
+                activeTab === tab ? "text-white" : "bg-gray-100"
+              }`}
+              style={activeTab === tab ? { backgroundColor: "#45038F" } : {}}
+            >
+              {tab
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())
+                .trim()}
+            </Button>
+          ))}
+        </div>
+
+        {renderContent()}
+
+        {activeTab !== "CustomerSpec" && (
+          <div className="mt-6">
+            <h2 className="text-lg font-semibold mb-2">Heatmap Scale</h2>
+            <div className="flex justify-between items-center">
+              <span className="flex items-center">
+                <span className="inline-block w-4 h-4 bg-green-500 rounded mr-1"></span>
+                Meets Specification
+              </span>
+              <span className="flex items-center">
+                <span className="inline-block w-4 h-4 bg-yellow-400 rounded mr-1"></span>
+                Near Specification
+              </span>
+              <span className="flex items-center">
+                <span className="inline-block w-4 h-4 bg-red-500 rounded mr-1"></span>
+                Fails Specification
+              </span>
+              <span className="flex items-center">
+                <span className="inline-block w-4 h-4 bg-gray-200 rounded mr-1"></span>
+                Not Available
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
-      {renderContent()}
-
-      {activeTab !== "CustomerSpec" && (
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold mb-2">Heatmap Scale</h2>
-          <div className="flex justify-between items-center">
-            <span className="flex items-center">
-              <span className="inline-block w-4 h-4 bg-green-500 rounded mr-1"></span>
-              Meets Specification
-            </span>
-            <span className="flex items-center">
-              <span className="inline-block w-4 h-4 bg-yellow-400 rounded mr-1"></span>
-              Near Specification
-            </span>
-            <span className="flex items-center">
-              <span className="inline-block w-4 h-4 bg-red-500 rounded mr-1"></span>
-              Fails Specification
-            </span>
-            <span className="flex items-center">
-              <span className="inline-block w-4 h-4 bg-gray-200 rounded mr-1"></span>
-              Not Available
-            </span>
-          </div>
-        </div>
-      )}
+      {/* Footer Background Image */}
+      <img
+        src="/footerImage.png" // Ensure the path is correct
+        alt="Footer Background"
+        className="absolute bottom-0 left-0 w-full h-24 object-cover"
+      />
     </div>
   );
 }
