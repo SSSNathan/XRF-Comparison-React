@@ -2,24 +2,45 @@ import React, { useState } from "react";
 import { Card, CardContent } from "./components/ui/card"; // Adjusted import paths
 import { Button } from "./components/ui/button";
 
+// Mapping of element symbols to their full names
+const elementNames = {
+  As: "Arsenic",
+  Hg: "Mercury",
+  Pb: "Lead",
+  Cr: "Chromium",
+  Cu: "Copper",
+  Ni: "Nickel",
+  Zn: "Zinc",
+  Mn: "Manganese",
+  Co: "Cobalt",
+  Se: "Selenium",
+  Tl: "Thallium",
+  Bi: "Bismuth",
+  Cd: "Cadmium",
+  Sn: "Tin",
+  V: "Vanadium",
+  Mo: "Molybdenum",
+};
+
+// Sorted elements data
 const elementsData = [
-  { element: "As", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.07 },
-  { element: "Hg", zMax: 0.02, jp500: 0.015, eMax500Soil: 0.5, eMax500Water: 0.1 },
-  { element: "Pb", zMax: 0.03, jp500: 0.03, eMax500Soil: 0.8, eMax500Water: 0.1 },
-  { element: "Cr", zMax: 0.1, jp500: 0.1, eMax500Soil: 4, eMax500Water: 3 },
-  { element: "Cu", zMax: 0.025, jp500: 0.025, eMax500Soil: 1, eMax500Water: 0.5 },
-  { element: "Ni", zMax: 0.03, jp500: 0.03, eMax500Soil: 1, eMax500Water: 2 },
-  { element: "Zn", zMax: 0.025, jp500: 0.025, eMax500Soil: 0.7, eMax500Water: 0.5 },
-  { element: "Mn", zMax: 0.1, jp500: 0.1, eMax500Soil: 3, eMax500Water: 2 },
-  { element: "Co", zMax: 0.03, jp500: 0.03, eMax500Soil: 16, eMax500Water: 16 },
-  { element: "Se", zMax: 0.009, jp500: 0.009, eMax500Soil: 0.3, eMax500Water: 0.2 },
-  { element: "Tl", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
-  { element: "Bi", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
-  { element: "Cd", zMax: null, jp500: null, eMax500Soil: 0.06, eMax500Water: 0.05 },
-  { element: "Sn", zMax: null, jp500: null, eMax500Soil: 0.15, eMax500Water: 0.1 },
-  { element: "V", zMax: null, jp500: null, eMax500Soil: 0.4, eMax500Water: 0.2 },
-  { element: "Mo", zMax: null, jp500: null, eMax500Soil: 0.5, eMax500Water: 0.05 },
-];
+  { element: "As", name: "Arsenic", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.07 },
+  { element: "Bi", name: "Bismuth", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
+  { element: "Cd", name: "Cadmium", zMax: null, jp500: null, eMax500Soil: 0.06, eMax500Water: 0.05 },
+  { element: "Co", name: "Cobalt", zMax: 0.03, jp500: 0.03, eMax500Soil: 16, eMax500Water: 16 },
+  { element: "Cr", name: "Chromium", zMax: 0.1, jp500: 0.1, eMax500Soil: 4, eMax500Water: 3 },
+  { element: "Cu", name: "Copper", zMax: 0.025, jp500: 0.025, eMax500Soil: 1, eMax500Water: 0.5 },
+  { element: "Hg", name: "Mercury", zMax: 0.02, jp500: 0.015, eMax500Soil: 0.5, eMax500Water: 0.1 },
+  { element: "Mn", name: "Manganese", zMax: 0.1, jp500: 0.1, eMax500Soil: 3, eMax500Water: 2 },
+  { element: "Mo", name: "Molybdenum", zMax: null, jp500: null, eMax500Soil: 0.5, eMax500Water: 0.05 },
+  { element: "Ni", name: "Nickel", zMax: 0.03, jp500: 0.03, eMax500Soil: 1, eMax500Water: 2 },
+  { element: "Pb", name: "Lead", zMax: 0.03, jp500: 0.03, eMax500Soil: 0.8, eMax500Water: 0.1 },
+  { element: "Se", name: "Selenium", zMax: 0.009, jp500: 0.009, eMax500Soil: 0.3, eMax500Water: 0.2 },
+  { element: "Sn", name: "Tin", zMax: null, jp500: null, eMax500Soil: 0.15, eMax500Water: 0.1 },
+  { element: "Tl", name: "Thallium", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
+  { element: "V", name: "Vanadium", zMax: null, jp500: null, eMax500Soil: 0.4, eMax500Water: 0.2 },
+  { element: "Zn", name: "Zinc", zMax: 0.025, jp500: 0.025, eMax500Soil: 0.7, eMax500Water: 0.5 },
+].sort((a, b) => a.element.localeCompare(b.element));
 
 const defaultRequirements = [
   { element: "As", requirement: 0.02 },
@@ -38,10 +59,11 @@ const defaultRequirements = [
   { element: "Sn", requirement: 0.2 },
   { element: "V", requirement: 0.2 },
   { element: "Mo", requirement: 0.2 },
-];
+].sort((a, b) => a.element.localeCompare(b.element));
 
 const getDynamicHeatmapColour = (value, requirement) => {
   if (value === null) return "bg-gray-200";
+  if (requirement === undefined || requirement === null) return "bg-gray-200";
   if (value < requirement) return "bg-green-500";
   if (value <= requirement + 0.01) return "bg-yellow-400";
   return "bg-red-500";
@@ -49,14 +71,19 @@ const getDynamicHeatmapColour = (value, requirement) => {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("CustomerSpec");
-  const [requirements, setRequirements] = useState(defaultRequirements);
+  const [requirements, setRequirements] = useState([]);
 
   const updateRequirement = (element, newRequirement) => {
-    setRequirements((prev) =>
-      prev.map((req) =>
-        req.element === element ? { ...req, requirement: parseFloat(newRequirement) } : req
-      )
-    );
+    setRequirements((prev) => {
+      const existing = prev.find((req) => req.element === element);
+      if (existing) {
+        return prev.map((req) =>
+          req.element === element ? { ...req, requirement: parseFloat(newRequirement) } : req
+        );
+      } else {
+        return [...prev, { element, requirement: parseFloat(newRequirement) }];
+      }
+    });
   };
 
   const renderContent = () => {
@@ -67,20 +94,26 @@ export default function App() {
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Set Your LoD Requirements</h2>
           <div className={commonGridClasses}>
-            {requirements.map((req) => (
-              <Card key={req.element} className="p-4 border rounded-lg">
-                <CardContent>
-                  <label className="font-semibold mb-1 block">{req.element}</label>
-                  <input
-                    type="number"
-                    step="0.001"
-                    value={req.requirement}
-                    onChange={(e) => updateRequirement(req.element, e.target.value)}
-                    className="border p-1 rounded w-full"
-                  />
-                </CardContent>
-              </Card>
-            ))}
+            {elementsData.map((element) => {
+              const currentRequirement = requirements.find((req) => req.element === element.element)?.requirement || "";
+              return (
+                <Card key={element.element} className="p-4 border rounded-lg">
+                  <CardContent>
+                    <label className="font-semibold mb-1 block">
+                      {element.element} - {element.name}
+                    </label>
+                    <input
+                      type="number"
+                      step="0.001"
+                      value={currentRequirement}
+                      onChange={(e) => updateRequirement(element.element, e.target.value)}
+                      className="border p-1 rounded w-full"
+                      placeholder="Enter requirement"
+                    />
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       );
@@ -89,13 +122,13 @@ export default function App() {
     return (
       <div className={commonGridClasses}>
         {elementsData.map((element) => {
-          const requirement = requirements.find(
-            (req) => req.element === element.element
-          )?.requirement;
+          const requirement = requirements.find((req) => req.element === element.element)?.requirement;
           return (
             <Card key={element.element} className="p-4 border rounded-lg">
               <CardContent>
-                <h2 className="text-xl font-semibold mb-2">{element.element}</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                  {element.element} - {element.name}
+                </h2>
                 <div
                   className={`h-12 w-full rounded ${getDynamicHeatmapColour(
                     element[activeTab],
@@ -103,7 +136,9 @@ export default function App() {
                   )}`}
                 >
                   <p className="text-center pt-2 text-white font-bold">
-                    {element[activeTab] ?? "N/A"}
+                    {element[activeTab] !== null && element[activeTab] !== undefined
+                      ? element[activeTab]
+                      : "N/A"}
                   </p>
                 </div>
               </CardContent>
@@ -119,14 +154,8 @@ export default function App() {
       <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
         Z-Spec Instrument Sensitivity Comparison
       </h1>
-      <div className="flex space-x-4">
-        {[
-          "CustomerSpec",
-          "zMax",
-          "jp500",
-          "eMax500Soil",
-          "eMax500Water",
-        ].map((tab) => (
+      <div className="flex flex-wrap gap-2">
+        {["CustomerSpec", "zMax", "jp500", "eMax500Soil", "eMax500Water"].map((tab) => (
           <Button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -135,7 +164,10 @@ export default function App() {
             }`}
             style={activeTab === tab ? { backgroundColor: "#45038F" } : {}}
           >
-            {tab.replace(/([A-Z])/g, " $1").trim()}
+            {tab
+              .replace(/([A-Z])/g, " $1")
+              .replace(/^./, (str) => str.toUpperCase())
+              .trim()}
           </Button>
         ))}
       </div>
@@ -145,10 +177,23 @@ export default function App() {
       {activeTab !== "CustomerSpec" && (
         <div className="mt-6">
           <h2 className="text-lg font-semibold mb-2">Heatmap Scale</h2>
-          <div className="flex justify-between">
-            <span className="text-sm">High Sensitivity (Green)</span>
-            <span className="text-sm">Near Limit (Yellow)</span>
-            <span className="text-sm">Low Sensitivity (Red)</span>
+          <div className="flex justify-between items-center">
+            <span className="flex items-center">
+              <span className="inline-block w-4 h-4 bg-green-500 rounded mr-1"></span>
+              Meets Specification
+            </span>
+            <span className="flex items-center">
+              <span className="inline-block w-4 h-4 bg-yellow-400 rounded mr-1"></span>
+              Near Specification
+            </span>
+            <span className="flex items-center">
+              <span className="inline-block w-4 h-4 bg-red-500 rounded mr-1"></span>
+              Fails Specification
+            </span>
+            <span className="flex items-center">
+              <span className="inline-block w-4 h-4 bg-gray-200 rounded mr-1"></span>
+              Not Available
+            </span>
           </div>
         </div>
       )}
