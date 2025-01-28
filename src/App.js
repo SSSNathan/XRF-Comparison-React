@@ -1,28 +1,7 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "./components/ui/card"; // Adjusted import paths
+import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 
-// Mapping of element symbols to their full names
-const elementNames = {
-  As: "Arsenic",
-  Hg: "Mercury",
-  Pb: "Lead",
-  Cr: "Chromium",
-  Cu: "Copper",
-  Ni: "Nickel",
-  Zn: "Zinc",
-  Mn: "Manganese",
-  Co: "Cobalt",
-  Se: "Selenium",
-  Tl: "Thallium",
-  Bi: "Bismuth",
-  Cd: "Cadmium",
-  Sn: "Tin",
-  V: "Vanadium",
-  Mo: "Molybdenum",
-};
-
-// Sorted elements data
 const elementsData = [
   { element: "As", name: "Arsenic", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.07 },
   { element: "Bi", name: "Bismuth", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
@@ -40,25 +19,6 @@ const elementsData = [
   { element: "Tl", name: "Thallium", zMax: 0.015, jp500: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
   { element: "V", name: "Vanadium", zMax: null, jp500: null, eMax500Soil: 0.4, eMax500Water: 0.2 },
   { element: "Zn", name: "Zinc", zMax: 0.025, jp500: 0.025, eMax500Soil: 0.7, eMax500Water: 0.5 },
-].sort((a, b) => a.element.localeCompare(b.element));
-
-const defaultRequirements = [
-  { element: "As", requirement: 0.02 },
-  { element: "Bi", requirement: 0.03 },
-  { element: "Cd", requirement: 0.07 },
-  { element: "Co", requirement: 0.05 },
-  { element: "Cr", requirement: 0.2 },
-  { element: "Cu", requirement: 0.05 },
-  { element: "Hg", requirement: 0.03 },
-  { element: "Mn", requirement: 0.2 },
-  { element: "Mo", requirement: 0.2 },
-  { element: "Ni", requirement: 0.05 },
-  { element: "Pb", requirement: 0.04 },
-  { element: "Se", requirement: 0.02 },
-  { element: "Sn", requirement: 0.2 },
-  { element: "Tl", requirement: 0.03 },
-  { element: "V", requirement: 0.2 },
-  { element: "Zn", requirement: 0.05 },
 ].sort((a, b) => a.element.localeCompare(b.element));
 
 const getDynamicHeatmapColour = (value, requirement) => {
@@ -86,132 +46,62 @@ export default function App() {
     });
   };
 
-  const renderContent = () => {
-    const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4";
-
-    if (activeTab === "CustomerSpec") {
-      return (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Set Your LoD Requirements</h2>
-          <div className={commonGridClasses}>
-            {elementsData.map((element) => {
-              const currentRequirement =
-                requirements.find((req) => req.element === element.element)?.requirement || "";
-              return (
-                <Card key={element.element} className="p-4 border rounded-lg">
-                  <CardContent>
-                    {/* Changed from label to h2 with consistent styling */}
-                    <h2 className="text-xl font-semibold mb-2">
-                      {element.element} - {element.name}
-                    </h2>
-                    <input
-                      type="number"
-                      step="0.001"
-                      value={currentRequirement}
-                      onChange={(e) => updateRequirement(element.element, e.target.value)}
-                      className="border p-2 rounded w-full"
-                      placeholder="Enter requirement"
-                    />
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className={commonGridClasses}>
-        {elementsData.map((element) => {
-          const requirement = requirements.find((req) => req.element === element.element)?.requirement;
-          return (
-            <Card key={element.element} className="p-4 border rounded-lg">
-              <CardContent>
-                <h2 className="text-xl font-semibold mb-2">
-                  {element.element} - {element.name}
-                </h2>
-                <div
-                  className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                    element[activeTab],
-                    requirement
-                  )}`}
-                >
-                  <p className="text-center pt-2 text-white font-bold">
-                    {element[activeTab] !== null && element[activeTab] !== undefined
-                      ? element[activeTab]
-                      : "N/A"}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-    );
-  };
+  const renderContent = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {elementsData.map((element) => {
+        const requirement = requirements.find((req) => req.element === element.element)?.requirement;
+        return (
+          <Card key={element.element} className="p-4 border rounded-lg">
+            <CardContent>
+              <h2 className="text-xl font-semibold mb-2">
+                {element.element} - {element.name}
+              </h2>
+              <div
+                className={`h-12 w-full rounded ${getDynamicHeatmapColour(
+                  element[activeTab],
+                  requirement
+                )}`}
+              >
+                <p className="text-center pt-2 text-white font-bold">
+                  {element[activeTab] !== null && element[activeTab] !== undefined
+                    ? element[activeTab]
+                    : "N/A"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
 
   return (
-    <div className="relative min-h-screen pb-24"> {/* Added padding bottom to accommodate footer */}
-      {/* Top Right Corner Image */}
+    <div className="relative min-h-screen pb-24">
       <img
-        src={`${process.env.PUBLIC_URL}/topRightImage.png`}
+        src="/topRightImage.png"
         alt="Top Right"
-        className="absolute top-4 right-4 w-16 h-16 object-contain z-10" // Adjust size as needed
+        className="absolute top-4 right-4 w-16 h-16 object-contain z-10"
       />
       <div className="p-6 space-y-4">
-        <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
-          Z-Spec Instrument Sensitivity Comparison
-        </h1>
+        <h1 className="text-2xl font-bold">Z-Spec Instrument Sensitivity Comparison</h1>
         <div className="flex flex-wrap gap-2">
           {["CustomerSpec", "zMax", "jp500", "eMax500Soil", "eMax500Water"].map((tab) => (
             <Button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`capitalize ${
-                activeTab === tab ? "text-white" : "bg-gray-100"
-              }`}
-              style={activeTab === tab ? { backgroundColor: "#45038F" } : {}}
+              className={`capitalize ${activeTab === tab ? "text-white bg-purple-800" : "bg-gray-100"}`}
             >
-              {tab
-                .replace(/([A-Z])/g, " $1")
-                .replace(/^./, (str) => str.toUpperCase())
-                .trim()}
+              {tab}
             </Button>
           ))}
         </div>
-
         {renderContent()}
-
-        {activeTab !== "CustomerSpec" && (
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-2">Heatmap Scale</h2>
-            <div className="flex justify-between items-center">
-              <span className="flex items-center">
-                <span className="inline-block w-4 h-4 bg-green-500 rounded mr-1"></span>
-                Meets Specification
-              </span>
-              <span className="flex items-center">
-                <span className="inline-block w-4 h-4 bg-yellow-400 rounded mr-1"></span>
-                Near Specification
-              </span>
-              <span className="flex items-center">
-                <span className="inline-block w-4 h-4 bg-red-500 rounded mr-1"></span>
-                Fails Specification
-              </span>
-              <span className="flex items-center">
-                <span className="inline-block w-4 h-4 bg-gray-200 rounded mr-1"></span>
-                Not Available
-              </span>
-            </div>
-          </div>
-        )}
       </div>
-      {/* Footer Background Image */}
       <img
-        src={`${process.env.PUBLIC_URL}/footerImage.png`}
+        src="/footerImage.png"
         alt="Footer Background"
         className="absolute bottom-0 left-0 w-full h-24 object-cover"
       />
     </div>
   );
+}
