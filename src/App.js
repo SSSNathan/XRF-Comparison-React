@@ -155,7 +155,7 @@ export default function App() {
     <div className="relative min-h-screen pb-24"> {/* Added padding bottom to accommodate footer */}
       {/* Top Right Corner Image */}
       <img
-        src="/topRightImage.png" // Ensure the path is correct
+        src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         className="absolute top-4 right-4 w-16 h-16 object-contain z-10" // Adjust size as needed
       />
@@ -211,7 +211,7 @@ export default function App() {
 
       {/* Footer Background Image */}
       <img
-        src="/footerImage.png" // Ensure the path is correct
+        src={`${process.env.PUBLIC_URL}/footerImage.png`}
         alt="Footer Background"
         className="absolute bottom-0 left-0 w-full h-24 object-cover"
       />
