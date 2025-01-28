@@ -82,10 +82,11 @@ export default function App() {
 
     return (
       <div className={commonGridClasses}>
+        <h2 className="text-xl font-semibold">Instrument LoD Vs Customer Requirement</h2>
         {elementsData.map((element) => {
           const requirement = requirements.find((req) => req.element === element.element)?.requirement;
           return (
-            <Card key={element.element} className="p-4 border rounded-lg">
+            <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
               <CardContent>
                 <h2 className="text-xl font-semibold mb-2">
                   {element.element} - {element.name}
