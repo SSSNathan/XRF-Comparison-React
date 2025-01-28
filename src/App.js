@@ -58,7 +58,7 @@ export default function App() {
               const currentRequirement =
                 requirements.find((req) => req.element === element.element)?.requirement || "";
               return (
-                <Card key={element.element} className="p-4 border rounded-lg">
+                <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
                   <CardContent>
                     <h2 className="text-xl font-semibold mb-2">
                       {element.element} - {element.name}
