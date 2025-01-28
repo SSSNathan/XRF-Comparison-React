@@ -113,7 +113,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen pb-24">
       <img
-        src="/topRightImage.png"
+        src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         className="absolute top-4 right-4 w-16 h-16 object-contain z-10"
       />
@@ -137,7 +137,7 @@ export default function App() {
         {renderContent()}
       </div>
       <img
-        src="/footerImage.png"
+        src={`${process.env.PUBLIC_URL}/footerImage.png`}
         alt="Footer Background"
         className="absolute bottom-0 left-0 w-full h-24 object-cover"
       />
