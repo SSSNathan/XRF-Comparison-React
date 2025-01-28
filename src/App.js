@@ -159,7 +159,6 @@ export default function App() {
         alt="Top Right"
         className="absolute top-4 right-4 w-16 h-16 object-contain z-10" // Adjust size as needed
       />
-
       <div className="p-6 space-y-4">
         <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
           Z-Spec Instrument Sensitivity Comparison
@@ -208,7 +207,6 @@ export default function App() {
           </div>
         )}
       </div>
-
       {/* Footer Background Image */}
       <img
         src={`${process.env.PUBLIC_URL}/footerImage.png`}
