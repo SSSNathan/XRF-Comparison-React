@@ -44,21 +44,21 @@ const elementsData = [
 
 const defaultRequirements = [
   { element: "As", requirement: 0.02 },
-  { element: "Hg", requirement: 0.03 },
-  { element: "Pb", requirement: 0.04 },
-  { element: "Cr", requirement: 0.2 },
-  { element: "Cu", requirement: 0.05 },
-  { element: "Ni", requirement: 0.05 },
-  { element: "Zn", requirement: 0.05 },
-  { element: "Mn", requirement: 0.2 },
-  { element: "Co", requirement: 0.05 },
-  { element: "Se", requirement: 0.02 },
-  { element: "Tl", requirement: 0.03 },
   { element: "Bi", requirement: 0.03 },
   { element: "Cd", requirement: 0.07 },
-  { element: "Sn", requirement: 0.2 },
-  { element: "V", requirement: 0.2 },
+  { element: "Co", requirement: 0.05 },
+  { element: "Cr", requirement: 0.2 },
+  { element: "Cu", requirement: 0.05 },
+  { element: "Hg", requirement: 0.03 },
+  { element: "Mn", requirement: 0.2 },
   { element: "Mo", requirement: 0.2 },
+  { element: "Ni", requirement: 0.05 },
+  { element: "Pb", requirement: 0.04 },
+  { element: "Se", requirement: 0.02 },
+  { element: "Sn", requirement: 0.2 },
+  { element: "Tl", requirement: 0.03 },
+  { element: "V", requirement: 0.2 },
+  { element: "Zn", requirement: 0.05 },
 ].sort((a, b) => a.element.localeCompare(b.element));
 
 const getDynamicHeatmapColour = (value, requirement) => {
@@ -95,19 +95,21 @@ export default function App() {
           <h2 className="text-xl font-semibold">Set Your LoD Requirements</h2>
           <div className={commonGridClasses}>
             {elementsData.map((element) => {
-              const currentRequirement = requirements.find((req) => req.element === element.element)?.requirement || "";
+              const currentRequirement =
+                requirements.find((req) => req.element === element.element)?.requirement || "";
               return (
                 <Card key={element.element} className="p-4 border rounded-lg">
                   <CardContent>
-                    <label className="font-semibold mb-1 block">
+                    {/* Changed from label to h2 with consistent styling */}
+                    <h2 className="text-xl font-semibold mb-2">
                       {element.element} - {element.name}
-                    </label>
+                    </h2>
                     <input
                       type="number"
                       step="0.001"
                       value={currentRequirement}
                       onChange={(e) => updateRequirement(element.element, e.target.value)}
-                      className="border p-1 rounded w-full"
+                      className="border p-2 rounded w-full"
                       placeholder="Enter requirement"
                     />
                   </CardContent>
