@@ -47,7 +47,7 @@ export default function App() {
   };
 
   const renderContent = () => {
-    const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4";
+    const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10";
 
     if (activeTab === "CustomerSpec") {
       return (
@@ -115,6 +115,7 @@ export default function App() {
       <img
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
+        style={{ width: "100px", height: "100px" }}
         className="absolute top-4 right-4 w-16 h-16 object-contain z-10"
       />
       <div className="p-6 space-y-4">
@@ -136,10 +137,16 @@ export default function App() {
         </div>
         {renderContent()}
       </div>
-      <img
-        src={`${process.env.PUBLIC_URL}/footerImage.png`}
-        alt="Footer Background"
-        className="absolute bottom-0 left-0 w-full h-24 object-cover"
+      {/* Footer Image */}
+      <div
+        className="w-full"
+        style={{
+          backgroundImage: `url(${process.env.PUBLIC_URL}/footerImage.png)`,
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "contain",
+          backgroundPosition: "bottom",
+          height: "200px", // Set a specific height
+        }}
       />
     </div>
   );
