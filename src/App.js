@@ -112,12 +112,19 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen pb-24">
-      <img
-        src={`${process.env.PUBLIC_URL}/topRightImage.png`}
-        alt="Top Right"
-        style={{ width: "100px", height: "100px" }}
-        className="absolute top-4 right-4 w-16 h-16 object-contain z-10"
-      />
+    <img
+      src={`${process.env.PUBLIC_URL}/topRightImage.png`}
+      alt="Top Right"
+      style={{
+        width: "200px",
+        height: "200px",
+        top: 0, // Ensure no vertical offset
+        right: 0, // Ensure no horizontal offset
+        margin: 0, // Remove any unwanted margins
+        padding: 0, // Remove any unwanted padding
+      }}
+      className="absolute object-contain z-10"
+    />
       <div className="p-6 space-y-4">
         <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
           Z-Spec Instrument Sensitivity Comparison
@@ -131,7 +138,10 @@ export default function App() {
                 activeTab === tab ? "text-white bg-purple-800" : "bg-gray-100"
               }`}
             >
-              {tab}
+              {tab
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())
+                .trim()}
             </Button>
           ))}
         </div>
@@ -139,13 +149,17 @@ export default function App() {
       </div>
       {/* Footer Image */}
       <div
-        className="w-full"
         style={{
           backgroundImage: `url(${process.env.PUBLIC_URL}/footerImage.png)`,
           backgroundRepeat: "no-repeat",
-          backgroundSize: "contain",
-          backgroundPosition: "bottom",
-          height: "200px", // Set a specific height
+          backgroundSize: "contain", // Scale the image naturally
+          backgroundPosition: "center bottom", // Ensure it's at the bottom
+          position: "absolute", // Anchors it relative to the parent
+          bottom: 0, // Locks it to the bottom
+          left: 0,
+          right: 0,
+          height: "300px", // Set the desired height of the footer image
+          zIndex: -1, // Ensure it's behind everything
         }}
       />
     </div>
