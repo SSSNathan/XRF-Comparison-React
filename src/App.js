@@ -38,42 +38,77 @@ export default function App() {
       const existing = prev.find((req) => req.element === element);
       if (existing) {
         return prev.map((req) =>
-          req.element === element ? { ...req, requirement: parseFloat(newRequirement) } : req
+          req.element === element ? { ...req, requirement: parseFloat(newRequirement) || 0 } : req
         );
       } else {
-        return [...prev, { element, requirement: parseFloat(newRequirement) }];
+        return [...prev, { element, requirement: parseFloat(newRequirement) || 0 }];
       }
     });
   };
 
-  const renderContent = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      {elementsData.map((element) => {
-        const requirement = requirements.find((req) => req.element === element.element)?.requirement;
-        return (
-          <Card key={element.element} className="p-4 border rounded-lg">
-            <CardContent>
-              <h2 className="text-xl font-semibold mb-2">
-                {element.element} - {element.name}
-              </h2>
-              <div
-                className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                  element[activeTab],
-                  requirement
-                )}`}
-              >
-                <p className="text-center pt-2 text-white font-bold">
-                  {element[activeTab] !== null && element[activeTab] !== undefined
-                    ? element[activeTab]
-                    : "N/A"}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
-  );
+  const renderContent = () => {
+    const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4";
+
+    if (activeTab === "CustomerSpec") {
+      return (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Set Your LoD Requirements</h2>
+          <div className={commonGridClasses}>
+            {elementsData.map((element) => {
+              const currentRequirement =
+                requirements.find((req) => req.element === element.element)?.requirement || "";
+              return (
+                <Card key={element.element} className="p-4 border rounded-lg">
+                  <CardContent>
+                    <h2 className="text-xl font-semibold mb-2">
+                      {element.element} - {element.name}
+                    </h2>
+                    <input
+                      type="number"
+                      step="0.001"
+                      value={currentRequirement}
+                      onChange={(e) => updateRequirement(element.element, e.target.value)}
+                      className="border p-2 rounded w-full"
+                      placeholder="Enter requirement"
+                    />
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={commonGridClasses}>
+        {elementsData.map((element) => {
+          const requirement = requirements.find((req) => req.element === element.element)?.requirement;
+          return (
+            <Card key={element.element} className="p-4 border rounded-lg">
+              <CardContent>
+                <h2 className="text-xl font-semibold mb-2">
+                  {element.element} - {element.name}
+                </h2>
+                <div
+                  className={`h-12 w-full rounded ${getDynamicHeatmapColour(
+                    element[activeTab],
+                    requirement
+                  )}`}
+                >
+                  <p className="text-center pt-2 text-white font-bold">
+                    {element[activeTab] !== null && element[activeTab] !== undefined
+                      ? element[activeTab]
+                      : "N/A"}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="relative min-h-screen pb-24">
@@ -83,13 +118,17 @@ export default function App() {
         className="absolute top-4 right-4 w-16 h-16 object-contain z-10"
       />
       <div className="p-6 space-y-4">
-        <h1 className="text-2xl font-bold">Z-Spec Instrument Sensitivity Comparison</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
+          Z-Spec Instrument Sensitivity Comparison
+        </h1>
         <div className="flex flex-wrap gap-2">
           {["CustomerSpec", "zMax", "jp500", "eMax500Soil", "eMax500Water"].map((tab) => (
             <Button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`capitalize ${activeTab === tab ? "text-white bg-purple-800" : "bg-gray-100"}`}
+              className={`capitalize ${
+                activeTab === tab ? "text-white bg-purple-800" : "bg-gray-100"
+              }`}
             >
               {tab}
             </Button>
