@@ -157,7 +157,8 @@ export default function App() {
       <img
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
-        className="absolute top-4 right-4 w-16 h-16 object-contain z-10" // Adjust size as needed
+        className="absolute top-4 right-4 object-contain z-10"
+        style={{ width: "150px", height: "50px" }} // Adjust size to fit the red box
       />
 
       <div className="p-6 space-y-4">
@@ -213,7 +214,8 @@ export default function App() {
       <img
         src={`${process.env.PUBLIC_URL}/footerImage.png`}
         alt="Footer Background"
-        className="absolute bottom-0 left-0 w-full h-24 object-cover"
+        className="absolute bottom-4 left-0 object-cover w-full"
+        style={{ height: "100px" }} // Adjust height to reduce blurriness
       />
     </div>
   );
