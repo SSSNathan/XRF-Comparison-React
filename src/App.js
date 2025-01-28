@@ -117,7 +117,7 @@ export default function App() {
       alt="Top Right"
       style={{
         width: "200px",
-        height: "200px",
+        height: "100px",
         top: 0, // Ensure no vertical offset
         right: 0, // Ensure no horizontal offset
         margin: 0, // Remove any unwanted margins
