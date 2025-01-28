@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "./components/ui/card"; // Adjusted import paths
-import { Tooltip, TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
 
 const elementsData = [
@@ -61,11 +60,13 @@ export default function App() {
   };
 
   const renderContent = () => {
+    const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4";
+
     if (activeTab === "CustomerSpec") {
       return (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Set Your LoD Requirements</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className={commonGridClasses}>
             {requirements.map((req) => (
               <Card key={req.element} className="p-4 border rounded-lg">
                 <CardContent>
@@ -86,7 +87,7 @@ export default function App() {
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className={commonGridClasses}>
         {elementsData.map((element) => {
           const requirement = requirements.find(
             (req) => req.element === element.element
@@ -96,14 +97,14 @@ export default function App() {
               <CardContent>
                 <h2 className="text-xl font-semibold mb-2">{element.element}</h2>
                 <div
-                    className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                        element[activeTab],
-                        requirement
-                    )}`}
+                  className={`h-12 w-full rounded ${getDynamicHeatmapColour(
+                    element[activeTab],
+                    requirement
+                  )}`}
                 >
-                    <p className="text-center pt-2 text-white font-bold">
-                        {element[activeTab] ?? "N/A"}
-                    </p>
+                  <p className="text-center pt-2 text-white font-bold">
+                    {element[activeTab] ?? "N/A"}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -114,38 +115,43 @@ export default function App() {
   };
 
   return (
-    <TooltipProvider>
-      <div className="p-6 space-y-4">
-        <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>Z-Spec Instrument Sensitivity Comparison</h1>
-        <div className="flex space-x-4">
-          {["CustomerSpec", "zMax", "jp500", "eMax500Soil", "eMax500Water"].map((tab) => (
-            <Button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`capitalize ${
-                activeTab === tab ? "text-white" : "bg-gray-100"
-              }`}
-              style={activeTab === tab ? { backgroundColor: "#45038F" } : {}}
-            >
-              {tab.replace(/([A-Z])/g, " $1").trim()}
-            </Button>
-          ))}
-        </div>
-
-        {renderContent()}
-
-        {activeTab !== "CustomerSpec" && (
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-2">Heatmap Scale</h2>
-            <div className="flex justify-between">
-              <span className="text-sm">High Sensitivity (Green)</span>
-              <span className="text-sm">Near Limit (Yellow)</span>
-              <span className="text-sm">Low Sensitivity (Red)</span>
-            </div>
-          </div>
-        )}
+    <div className="p-6 space-y-4">
+      <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
+        Z-Spec Instrument Sensitivity Comparison
+      </h1>
+      <div className="flex space-x-4">
+        {[
+          "CustomerSpec",
+          "zMax",
+          "jp500",
+          "eMax500Soil",
+          "eMax500Water",
+        ].map((tab) => (
+          <Button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`capitalize ${
+              activeTab === tab ? "text-white" : "bg-gray-100"
+            }`}
+            style={activeTab === tab ? { backgroundColor: "#45038F" } : {}}
+          >
+            {tab.replace(/([A-Z])/g, " $1").trim()}
+          </Button>
+        ))}
       </div>
-    </TooltipProvider>
+
+      {renderContent()}
+
+      {activeTab !== "CustomerSpec" && (
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold mb-2">Heatmap Scale</h2>
+          <div className="flex justify-between">
+            <span className="text-sm">High Sensitivity (Green)</span>
+            <span className="text-sm">Near Limit (Yellow)</span>
+            <span className="text-sm">Low Sensitivity (Red)</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
-
