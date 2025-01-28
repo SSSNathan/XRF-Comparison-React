@@ -95,18 +95,16 @@ export default function App() {
             <Card key={element.element} className="p-4 border rounded-lg">
               <CardContent>
                 <h2 className="text-xl font-semibold mb-2">{element.element}</h2>
-                <Tooltip content={`Value: ${element[activeTab] ?? "N/A"}`}>
-                  <div
+                <div
                     className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                      element[activeTab],
-                      requirement
+                        element[activeTab],
+                        requirement
                     )}`}
-                  >
+                >
                     <p className="text-center pt-2 text-white font-bold">
-                      {element[activeTab] ?? "N/A"}
+                        {element[activeTab] ?? "N/A"}
                     </p>
-                  </div>
-                </Tooltip>
+                </div>
               </CardContent>
             </Card>
           );
