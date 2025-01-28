@@ -81,32 +81,34 @@ export default function App() {
     }
 
     return (
-      <div className={commonGridClasses}>
+      <div className="space-y-4">
         <h2 className="text-xl font-semibold">Instrument LoD Vs Customer Requirement</h2>
-        {elementsData.map((element) => {
-          const requirement = requirements.find((req) => req.element === element.element)?.requirement;
-          return (
-            <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
-              <CardContent>
-                <h2 className="text-xl font-semibold mb-2">
-                  {element.element} - {element.name}
-                </h2>
-                <div
-                  className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                    element[activeTab],
-                    requirement
-                  )}`}
-                >
-                  <p className="text-center pt-2 text-white font-bold">
-                    {element[activeTab] !== null && element[activeTab] !== undefined
-                      ? element[activeTab]
-                      : "N/A"}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        <div className={commonGridClasses}>
+          {elementsData.map((element) => {
+            const requirement = requirements.find((req) => req.element === element.element)?.requirement;
+            return (
+              <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
+                <CardContent>
+                  <h2 className="text-xl font-semibold mb-2">
+                    {element.element} - {element.name}
+                  </h2>
+                  <div
+                    className={`h-12 w-full rounded ${getDynamicHeatmapColour(
+                      element[activeTab],
+                      requirement
+                    )}`}
+                  >
+                    <p className="text-center pt-2 text-white font-bold">
+                      {element[activeTab] !== null && element[activeTab] !== undefined
+                        ? element[activeTab]
+                        : "N/A"}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
     );
   };
