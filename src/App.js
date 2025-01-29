@@ -120,14 +120,10 @@ export default function App() {
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         style={{
-          width: "clamp(100px, 20vw, 200px)", // Responsive width: min 100px, max 200px
-          height: "auto", // Maintains aspect ratio
-          top: "1rem", // Keeps some vertical offset
-          right: "1rem", // Keeps some horizontal offset
-          margin: 0,
-          padding: 0,
+          width: "clamp(100px, 20vw, 200px)", // Responsive width
+          height: "auto", // Maintain aspect ratio
         }}
-        className="absolute object-contain z-10"
+        className="absolute top-4 right-4 sm:relative sm:top-0 sm:left-0 sm:mx-auto sm:block z-10"
       />
       <div className="p-6 space-y-4">
         <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
