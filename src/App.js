@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 
+// Sorted elements data
 const elementsData = [
   { element: "As", name: "Arsenic", zMaxFood: 0.015, zMaxWater: 0.03, jp500Food: 0.015, eMax500Soil: 0.4, eMax500Water: 0.07 },
   { element: "Bi", name: "Bismuth", zMaxFood: 0.015, zMaxWater: null, jp500Food: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
@@ -25,29 +26,27 @@ const elementsData = [
   { element: "Sb", name: "Antimony", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: 0.4, eMax500Water: 0.2 }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
-const tabMapping = {
-  "CustomerSpec": "CustomerSpec",
-  "Z-Max (Food)": "zMaxFood",
-  "Z-Max (Water)": "zMaxWater",
-  "JP500 (Food)": "jp500Food",
-  "E-Max 500 (Soil)": "eMax500Soil",
-  "E-Max 500 (Water)": "eMax500Water",
-};
-
-const selectedSpec = tabMapping[activeTab];
-
+// Function to determine heatmap color based on value and requirement
 const getDynamicHeatmapColour = (value, requirement) => {
-  if (value === null) return "bg-gray-200";
-  if (requirement === undefined || requirement === null) return "bg-gray-200";
-  if (value < requirement) return "bg-green-500";
-  if (value <= requirement + 0.01) return "bg-yellow-400";
+  if (value === null || value === undefined) return "bg-gray-200";
+  if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
+
+  const parsedRequirement = parseFloat(requirement);
+  if (isNaN(parsedRequirement)) return "bg-gray-200";
+
+  if (value < parsedRequirement) return "bg-green-500";
+  if (value <= parsedRequirement + 0.01) return "bg-yellow-400";
   return "bg-red-500";
 };
 
 export default function App() {
+  // State to manage the active tab (stores the key)
   const [activeTab, setActiveTab] = useState("CustomerSpec");
+
+  // State to manage user requirements (stored as strings)
   const [requirements, setRequirements] = useState([]);
 
+  // Function to update requirements
   const updateRequirement = (element, newRequirement) => {
     setRequirements((prev) => {
       const existing = prev.find((req) => req.element === element);
@@ -61,9 +60,21 @@ export default function App() {
     });
   };
 
+  // Define tabs with keys and labels
+  const tabs = [
+    { key: "CustomerSpec", label: "Customer Spec" },
+    { key: "zMaxFood", label: "Z-Max (Food)" },
+    { key: "zMaxWater", label: "Z-Max (Water)" },
+    { key: "jp500Food", label: "JP500 (Food)" },
+    { key: "eMax500Soil", label: "E-Max 500 (Soil)" },
+    { key: "eMax500Water", label: "E-Max 500 (Water)" }
+  ];
+
+  // Function to render content based on active tab
   const renderContent = () => {
     const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10";
 
+    // If active tab is "CustomerSpec", render input fields
     if (activeTab === "CustomerSpec") {
       return (
         <div className="space-y-4">
@@ -95,31 +106,31 @@ export default function App() {
       );
     }
 
+    // If active tab is an instrument spec, render heatmap
     return (
-      
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Instrument LoD Vs Customer Requirement</h2>
         <div className={commonGridClasses}>
           {elementsData.map((element) => {
             const requirement = requirements.find((req) => req.element === element.element)?.requirement;
+            const specValue = element[activeTab];
+
             return (
               <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
                 <CardContent>
                   <h2 className="text-xl font-semibold mb-2">
                     {element.element} - {element.name}
                   </h2>
-                    <div
-                      className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                        element[selectedSpec], // Use mapped key
-                        requirement
-                      )}`}
-                    >
-                      <p className="text-center pt-2 text-white font-bold">
-                        {element[selectedSpec] !== null && element[selectedSpec] !== undefined
-                          ? element[selectedSpec]
-                          : "N/A"}
-                      </p>
-                    </div>
+                  <div className={`h-12 w-full rounded ${getDynamicHeatmapColour(specValue, requirement)}`}>
+                    <p className="text-center pt-2 text-white font-bold">
+                      {specValue !== null && specValue !== undefined ? specValue : "N/A"}
+                    </p>
+                  </div>
+                  {requirement && (
+                    <p className="mt-2 text-sm text-gray-700">
+                      Requirement: {requirement}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -131,41 +142,46 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen pb-24">
+      {/* Top Right Image */}
       <img
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         style={{
           width: "clamp(100px, 20vw, 200px)", // Responsive width
           height: "auto", // Maintain aspect ratio
-          margin: "0 auto", // Centre horizontally
+          margin: "0 auto", // Center horizontally
           display: "block", // Ensure it's treated as a block element
           position: "relative", // Ensure proper stacking context
           zIndex: 50, // Higher than other elements
         }}
         className="mt-4"
       />
+
+      {/* Main Content */}
       <div className="p-6 space-y-4">
         <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
           Z-Spec Instrument Sensitivity Comparison
         </h1>
+
+        {/* Tabs */}
         <div className="flex flex-wrap gap-2">
-          {["CustomerSpec", "Z-Max (Food)", "Z-Max (Water)", "JP500 (Food)", "E-Max 500 (Soil)", "E-Max 500 (Water)"].map((tab) => (
+          {tabs.map((tab) => (
             <Button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)} // Store the key, not the label
               className={`capitalize ${
-                activeTab === tab ? "text-white bg-purple-800" : "bg-gray-100"
+                activeTab === tab.key ? "text-white bg-purple-800" : "bg-gray-100"
               }`}
             >
-              {tab
-                .replace(/([A-Z])/g, " $1")
-                .replace(/^./, (str) => str.toUpperCase())
-                .trim()}
+              {tab.label} {/* Use human-readable name */}
             </Button>
           ))}
         </div>
+
+        {/* Render Content Based on Active Tab */}
         {renderContent()}
       </div>
+
       {/* Footer Image */}
       <div
         style={{
