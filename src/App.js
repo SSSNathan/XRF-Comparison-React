@@ -25,6 +25,17 @@ const elementsData = [
   { element: "Sb", name: "Antimony", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: 0.4, eMax500Water: 0.2 }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
+const tabMapping = {
+  "CustomerSpec": "CustomerSpec",
+  "Z-Max (Food)": "zMaxFood",
+  "Z-Max (Water)": "zMaxWater",
+  "JP500 (Food)": "jp500Food",
+  "E-Max 500 (Soil)": "eMax500Soil",
+  "E-Max 500 (Water)": "eMax500Water",
+};
+
+const selectedSpec = tabMapping[activeTab];
+
 const getDynamicHeatmapColour = (value, requirement) => {
   if (value === null) return "bg-gray-200";
   if (requirement === undefined || requirement === null) return "bg-gray-200";
@@ -97,18 +108,18 @@ export default function App() {
                   <h2 className="text-xl font-semibold mb-2">
                     {element.element} - {element.name}
                   </h2>
-                  <div
-                    className={`h-12 w-full rounded ${getDynamicHeatmapColour(
-                      element[activeTab],
-                      requirement
-                    )}`}
-                  >
-                    <p className="text-center pt-2 text-white font-bold">
-                      {element[activeTab] !== null && element[activeTab] !== undefined
-                        ? element[activeTab]
-                        : "N/A"}
-                    </p>
-                  </div>
+                    <div
+                      className={`h-12 w-full rounded ${getDynamicHeatmapColour(
+                        element[selectedSpec], // Use mapped key
+                        requirement
+                      )}`}
+                    >
+                      <p className="text-center pt-2 text-white font-bold">
+                        {element[selectedSpec] !== null && element[selectedSpec] !== undefined
+                          ? element[selectedSpec]
+                          : "N/A"}
+                      </p>
+                    </div>
                 </CardContent>
               </Card>
             );
