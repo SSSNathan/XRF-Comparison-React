@@ -147,14 +147,14 @@ export default function App() {
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         style={{
-          width: "clamp(100px, 20vw, 200px)", // Responsive width
-          height: "auto", // Maintain aspect ratio
-          margin: "0 auto", // Center horizontally
-          display: "block", // Ensure it's treated as a block element
-          position: "relative", // Ensure proper stacking context
-          zIndex: 50, // Higher than other elements
+          width: "clamp(50px, 10vw, 150px)", // Smaller range for mobile
+          height: "auto",
+          top: "1rem",
+          right: "1rem",
+          margin: 0,
+          padding: 0,
         }}
-        className="mt-4"
+        className="absolute object-contain z-10"
       />
 
       {/* Main Content */}
