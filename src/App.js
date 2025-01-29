@@ -122,8 +122,12 @@ export default function App() {
         style={{
           width: "clamp(100px, 20vw, 200px)", // Responsive width
           height: "auto", // Maintain aspect ratio
+          margin: "0 auto", // Centre horizontally
+          display: "block", // Ensure it's treated as a block element
+          position: "relative", // Ensure proper stacking context
+          zIndex: 50, // Higher than other elements
         }}
-        className="absolute top-4 right-4 sm:relative sm:top-0 sm:left-0 sm:mx-auto sm:block z-10"
+        className="mt-4"
       />
       <div className="p-6 space-y-4">
         <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
