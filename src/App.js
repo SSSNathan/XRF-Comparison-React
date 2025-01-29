@@ -42,10 +42,10 @@ export default function App() {
       const existing = prev.find((req) => req.element === element);
       if (existing) {
         return prev.map((req) =>
-          req.element === element ? { ...req, requirement: parseFloat(newRequirement) || 0 } : req
+          req.element === element ? { ...req, requirement: newRequirement } : req
         );
       } else {
-        return [...prev, { element, requirement: parseFloat(newRequirement) || 0 }];
+        return [...prev, { element, requirement: newRequirement }];
       }
     });
   };
