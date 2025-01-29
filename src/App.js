@@ -81,6 +81,7 @@ export default function App() {
     }
 
     return (
+      
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Instrument LoD Vs Customer Requirement</h2>
         <div className={commonGridClasses}>
@@ -115,19 +116,19 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen pb-24">
-    <img
-      src={`${process.env.PUBLIC_URL}/topRightImage.png`}
-      alt="Top Right"
-      style={{
-        width: "clamp(100px, 20vw, 200px)", // Responsive width: min 100px, max 200px
-        height: "auto", // Maintains aspect ratio
-        top: "1rem", // Keeps some vertical offset
-        right: "1rem", // Keeps some horizontal offset
-        margin: 0,
-        padding: 0,
-      }}
-      className="absolute object-contain z-10"
-    />
+      <img
+        src={`${process.env.PUBLIC_URL}/topRightImage.png`}
+        alt="Top Right"
+        style={{
+          width: "clamp(100px, 20vw, 200px)", // Responsive width: min 100px, max 200px
+          height: "auto", // Maintains aspect ratio
+          top: "1rem", // Keeps some vertical offset
+          right: "1rem", // Keeps some horizontal offset
+          margin: 0,
+          padding: 0,
+        }}
+        className="absolute object-contain z-10"
+      />
       <div className="p-6 space-y-4">
         <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
           Z-Spec Instrument Sensitivity Comparison
