@@ -119,12 +119,12 @@ export default function App() {
       src={`${process.env.PUBLIC_URL}/topRightImage.png`}
       alt="Top Right"
       style={{
-        width: "200px",
-        height: "100px",
-        top: 0, // Ensure no vertical offset
-        right: 0, // Ensure no horizontal offset
-        margin: 0, // Remove any unwanted margins
-        padding: 0, // Remove any unwanted padding
+        width: "clamp(100px, 20vw, 200px)", // Responsive width: min 100px, max 200px
+        height: "auto", // Maintains aspect ratio
+        top: "1rem", // Keeps some vertical offset
+        right: "1rem", // Keeps some horizontal offset
+        margin: 0,
+        padding: 0,
       }}
       className="absolute object-contain z-10"
     />
