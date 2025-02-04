@@ -40,7 +40,7 @@ const elementsData = [
   { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
-// Utility function to determine heatmap colour
+// Utility: returns a Tailwind background colour based on the comparison of spec vs requirement.
 const getDynamicHeatmapColour = (value, requirement) => {
   if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
   if (value === undefined || value === null) return "bg-red-500";
@@ -51,41 +51,22 @@ const getDynamicHeatmapColour = (value, requirement) => {
   return "bg-red-500";
 };
 
-// Define a mapping for instruments used in the AI recommendation.
-// For each instrument, specify which property key to use for Water and for Solid (non-water) samples.
+// Mapping for instruments and their property keys.
 const instrumentMapping = [
-  {
-    name: "JP500",
-    waterKey: "jp500Water",
-    solidKey: "jp500Food",
-  },
-  {
-    name: "Z-Max",
-    waterKey: "zMaxWater",
-    solidKey: "zMaxFood",
-  },
-  {
-    name: "E-Max 500",
-    waterKey: "eMax500Water",
-    solidKey: "eMax500Soil",
-  },
-  {
-    name: "E-Lite",
-    waterKey: "eLiteWater",
-    solidKey: null, // No solid version available
-  },
+  { name: "JP500", waterKey: "jp500Water", solidKey: "jp500Food" },
+  { name: "Z-Max", waterKey: "zMaxWater", solidKey: "zMaxFood" },
+  { name: "E-Max 500", waterKey: "eMax500Water", solidKey: "eMax500Soil" },
+  { name: "E-Lite", waterKey: "eLiteWater", solidKey: null } // Not available in Solid
 ];
 
-// AI Recommendations component – calculates, per instrument, the number of elements
-// for which the spec meets the customer requirement versus fails, using the selected matrix.
-function AIRecommendations({ elementsData, requirements, selectedMatrix }) {
+// Recommendation Component (renamed and updated)
+function Recommendation({ elementsData, requirements, selectedMatrix }) {
+  // Calculate per-instrument scores.
   const results = instrumentMapping.map(instr => {
-    let matches = 0;
-    let fails = 0;
-    let total = 0;
+    let matches = 0, fails = 0, total = 0;
     const key = selectedMatrix === "Water" ? instr.waterKey : instr.solidKey;
     if (!key) {
-      return { instrument: instr.name, matches: 0, fails: 0, total: 0, notApplicable: true };
+      return { instrument: instr.name, matches: 0, fails: 0, total: 0, net: 0, notApplicable: true };
     }
     elementsData.forEach(e => {
       const reqObj = requirements.find(r => r.element === e.element);
@@ -102,24 +83,24 @@ function AIRecommendations({ elementsData, requirements, selectedMatrix }) {
         }
       }
     });
-    return { instrument: instr.name, matches, fails, total, notApplicable: false };
+    return { instrument: instr.name, matches, fails, total, net: matches - fails, notApplicable: false };
   });
 
-  // Pick the instrument with the highest net score (matches minus fails)
-  let bestInstrument = null;
+  // Determine the best (highest) net score.
   let bestScore = -Infinity;
   results.forEach(result => {
-    if (result.notApplicable) return;
-    const score = result.matches - result.fails;
-    if (score > bestScore) {
-      bestScore = score;
-      bestInstrument = result.instrument;
+    if (!result.notApplicable && result.net > bestScore) {
+      bestScore = result.net;
     }
   });
+  // Recommended instruments are those whose net score equals bestScore.
+  const recommendedInstruments = results.filter(
+    result => !result.notApplicable && result.net === bestScore
+  ).map(r => r.instrument);
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-3xl font-bold text-center">AI Recommendations</h2>
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-center">Recommendation</h2>
       <p className="text-lg text-center">
         Sample Matrix: <span className="font-semibold">{selectedMatrix}</span>
       </p>
@@ -132,10 +113,16 @@ function AIRecommendations({ elementsData, requirements, selectedMatrix }) {
                 <p className="text-gray-600">Not available for {selectedMatrix} samples.</p>
               ) : (
                 <>
-                  <p className="mt-2">Matches: <span className="font-bold">{result.matches}</span> / {result.total}</p>
-                  <p className="mt-1">Fails: <span className="font-bold">{result.fails}</span></p>
-                  {bestInstrument === result.instrument && (
-                    <p className="mt-2 text-green-600 font-bold">Recommended!</p>
+                  <p className="mt-2">
+                    Matches: <span className="font-bold">{result.matches}</span> / {result.total}
+                  </p>
+                  <p className="mt-1">
+                    Fails: <span className="font-bold">{result.fails}</span>
+                  </p>
+                  {recommendedInstruments.includes(result.instrument) && (
+                    <div className="mt-2 bg-green-500 rounded p-2 text-white text-center font-bold">
+                      Recommended!
+                    </div>
                   )}
                 </>
               )}
@@ -149,12 +136,11 @@ function AIRecommendations({ elementsData, requirements, selectedMatrix }) {
 
 // Main App Component
 export default function App() {
-  // Manage active tab, requirements, and the selected sample matrix.
   const [activeTab, setActiveTab] = useState("CustomerSpec");
   const [requirements, setRequirements] = useState([]);
   const [selectedMatrix, setSelectedMatrix] = useState("Water"); // "Water" or "Solid"
 
-  // Update a requirement for a given element.
+  // Update requirement value.
   const updateRequirement = (element, newRequirement) => {
     setRequirements(prev => {
       const existing = prev.find(req => req.element === element);
@@ -166,19 +152,25 @@ export default function App() {
     });
   };
 
-  // Define tabs. The original instrument spec pages (which use a heatmap) are preserved,
-  // and an additional "AI Recommendations" tab is added.
-  const tabs = [
-    { key: "CustomerSpec", label: "Customer Spec" },
-    { key: "zMaxFood", label: "Z-Max (Food)" },
-    { key: "zMaxWater", label: "Z-Max (Water)" },
-    { key: "jp500Food", label: "JP500 (Food)" },
-    { key: "jp500Water", label: "JP500 (Water)" },
-    { key: "eMax500Soil", label: "E-Max 500 (Soil)" },
-    { key: "eMax500Water", label: "E-Max 500 (Water)" },
-    { key: "eLiteWater", label: "E-Lite (Water)" },
-    { key: "AIRecommendations", label: "AI Recommendations" },
-  ];
+  // Dynamically build the tabs based on the selected matrix.
+  const tabs = [];
+  tabs.push({ key: "CustomerSpec", label: "Customer Spec" });
+  instrumentMapping.forEach(instr => {
+    if (selectedMatrix === "Water" && instr.waterKey) {
+      tabs.push({ key: instr.waterKey, label: `${instr.name} (Water)` });
+    }
+    if (selectedMatrix === "Solid" && instr.solidKey) {
+      tabs.push({ key: instr.solidKey, label: `${instr.name} (Solid)` });
+    }
+  });
+  tabs.push({ key: "Recommendation", label: "Recommendation" });
+
+  // Ensure activeTab is valid when the matrix selection changes.
+  useEffect(() => {
+    if (!tabs.find(tab => tab.key === activeTab)) {
+      setActiveTab("CustomerSpec");
+    }
+  }, [selectedMatrix]);
 
   // Render content based on the active tab.
   const renderContent = () => {
@@ -188,7 +180,6 @@ export default function App() {
       return (
         <div className="space-y-6">
           <h2 className="text-3xl font-semibold">Set Your LoD Requirements</h2>
-          {/* Global matrix selection */}
           <div className="mb-4">
             <label className="mr-2 font-semibold">Select Sample Matrix:</label>
             <select
@@ -202,8 +193,7 @@ export default function App() {
           </div>
           <div className={commonGridClasses}>
             {elementsData.map(element => {
-              const currentRequirement =
-                requirements.find(req => req.element === element.element)?.requirement || "";
+              const currentRequirement = requirements.find(req => req.element === element.element)?.requirement || "";
               return (
                 <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
                   <CardContent>
@@ -223,10 +213,16 @@ export default function App() {
           </div>
         </div>
       );
-    } else if (activeTab === "AIRecommendations") {
-      return <AIRecommendations elementsData={elementsData} requirements={requirements} selectedMatrix={selectedMatrix} />;
+    } else if (activeTab === "Recommendation") {
+      return (
+        <Recommendation
+          elementsData={elementsData}
+          requirements={requirements}
+          selectedMatrix={selectedMatrix}
+        />
+      );
     } else {
-      // For instrument spec tabs: display cards with a heatmap that compares each instrument's LoD to the customer requirement.
+      // Instrument spec page: display cards with a heatmap showing spec vs customer requirement.
       return (
         <div className="space-y-6">
           <h2 className="text-3xl font-semibold">Instrument LoD vs Customer Requirement</h2>
@@ -278,7 +274,7 @@ export default function App() {
         <h1 className="text-4xl font-bold" style={{ color: "#191919" }}>
           Z-Spec Instrument Sensitivity Comparison
         </h1>
-        {/* Tabs */}
+        {/* Dynamic Tabs */}
         <div className="flex flex-wrap gap-2">
           {tabs.map(tab => (
             <Button
@@ -290,7 +286,7 @@ export default function App() {
             </Button>
           ))}
         </div>
-        {/* Render Content Based on Active Tab */}
+        {/* Render Content */}
         {renderContent()}
       </div>
 
