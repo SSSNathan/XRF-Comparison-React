@@ -13,7 +13,6 @@ import {
 } from "chart.js";
 import { Canvas } from "@react-three/fiber";
 
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 // Sorted elements data (name field omitted as it's not provided)
