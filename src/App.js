@@ -1,30 +1,45 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "./components/ui/card";
-import { Button } from "./components/ui/button";
+import { Button } from "./components/ui/button"; 
 
 // Sorted elements data
 const elementsData = [
-  { element: "As", name: "Arsenic", zMaxFood: 0.015, zMaxWater: 0.03, jp500Food: 0.015, eMax500Soil: 0.4, eMax500Water: 0.07 },
-  { element: "Bi", name: "Bismuth", zMaxFood: 0.015, zMaxWater: null, jp500Food: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
-  { element: "Cd", name: "Cadmium", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: 0.06, eMax500Water: 0.05 },
-  { element: "Co", name: "Cobalt", zMaxFood: 0.03, zMaxWater: 0.05, jp500Food: 0.03, eMax500Soil: 16, eMax500Water: 16 },
-  { element: "Cr", name: "Chromium", zMaxFood: 0.1, zMaxWater: 0.2, jp500Food: 0.1, eMax500Soil: 4, eMax500Water: 3 },
-  { element: "Cu", name: "Copper", zMaxFood: 0.025, zMaxWater: 0.1, jp500Food: 0.025, eMax500Soil: 1, eMax500Water: 0.5 },
-  { element: "Fe", name: "Iron", zMaxFood: null, zMaxWater: 0.1, jp500Food: null, eMax500Soil: null, eMax500Water: null },
-  { element: "Hg", name: "Mercury", zMaxFood: 0.02, zMaxWater: 0.03, jp500Food: 0.015, eMax500Soil: 0.5, eMax500Water: 0.1 },
-  { element: "Mn", name: "Manganese", zMaxFood: 0.1, zMaxWater: 0.2, jp500Food: 0.1, eMax500Soil: 3, eMax500Water: 2 },
-  { element: "Mo", name: "Molybdenum", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: null, eMax500Water: null },
-  { element: "Ni", name: "Nickel", zMaxFood: 0.03, zMaxWater: 0.05, jp500Food: 0.03, eMax500Soil: 1, eMax500Water: 2 },
-  { element: "Pb", name: "Lead", zMaxFood: 0.03, zMaxWater: 0.03, jp500Food: 0.03, eMax500Soil: 0.8, eMax500Water: 0.1 },
-  { element: "Se", name: "Selenium", zMaxFood: 0.009, zMaxWater: 0.01, jp500Food: 0.009, eMax500Soil: 0.3, eMax500Water: 0.2 },
-  { element: "Sn", name: "Tin", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: null, eMax500Water: null },
-  { element: "Tl", name: "Thallium", zMaxFood: 0.015, zMaxWater: 0.03, jp500Food: 0.015, eMax500Soil: 0.4, eMax500Water: 0.2 },
-  { element: "V", name: "Vanadium", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: null, eMax500Water: null },
-  { element: "W", name: "Tungsten", zMaxFood: null, zMaxWater: 0.1, jp500Food: null, eMax500Soil: null, eMax500Water: null },
-  { element: "Ta", name: "Tantalum", zMaxFood: null, zMaxWater: 0.1, jp500Food: null, eMax500Soil: null, eMax500Water: null },
-  { element: "Zn", name: "Zinc", zMaxFood: 0.025, zMaxWater: 0.05, jp500Food: 0.025, eMax500Soil: 0.7, eMax500Water: 0.5 },
-  { element: "Sb", name: "Antimony", zMaxFood: null, zMaxWater: null, jp500Food: null, eMax500Soil: 0.4, eMax500Water: 0.2 }
+  { element: "Na", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 100 },
+  { element: "Mg", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 40 },
+  { element: "Al", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 20 },
+  { element: "Si", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 5 },
+  { element: "P",  eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: 100, zMaxFood: null, zMaxWater: null, eLiteWater: 1.5 },
+  { element: "S",  eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: 50,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.6 },
+  { element: "Cl", eMaxSoil: null, eMaxWater: 500, jp500Food: null, jp500Water: 30,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.3 },
+  { element: "K",  eMaxSoil: null, eMaxWater: 300, jp500Food: null, jp500Water: 20,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.1 },
+  { element: "Ca", eMaxSoil: null, eMaxWater: 200, jp500Food: null, jp500Water: 15,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.05 },
+  { element: "Ti", eMaxSoil: null, eMaxWater: 20,  jp500Food: null, jp500Water: 1,   zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "V",  eMaxSoil: null, eMaxWater: 8,   jp500Food: null, jp500Water: 0.5, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Cr", eMaxSoil: 4,    eMaxWater: 4,   jp500Food: 0.1,  jp500Water: 0.3, zMaxFood: 0.1,  zMaxWater: 0.2,  eLiteWater: null },
+  { element: "Mn", eMaxSoil: 3,    eMaxWater: 3,   jp500Food: 0.1,  jp500Water: 0.2, zMaxFood: 0.1,  zMaxWater: 0.2,  eLiteWater: null },
+  { element: "Fe", eMaxSoil: null, eMaxWater: 2,   jp500Food: null, jp500Water: 0.1, zMaxFood: null, zMaxWater: 0.1,  eLiteWater: null },
+  { element: "Co", eMaxSoil: 16,   eMaxWater: 0.5, jp500Food: 0.03, jp500Water: 0.07,zMaxFood: 0.03, zMaxWater: 0.05, eLiteWater: null },
+  { element: "Ni", eMaxSoil: 1,    eMaxWater: 1,   jp500Food: 0.03, jp500Water: 0.05,zMaxFood: 0.03, zMaxWater: 0.05, eLiteWater: null },
+  { element: "Cu", eMaxSoil: 1,    eMaxWater: 1,   jp500Food: 0.025,jp500Water: 0.05,zMaxFood: 0.025,zMaxWater: 0.1,  eLiteWater: null },
+  { element: "Zn", eMaxSoil: 0.7,  eMaxWater: 0.3, jp500Food: 0.025,jp500Water: 0.04,zMaxFood: 0.025,zMaxWater: 0.05, eLiteWater: null },
+  { element: "Ge", eMaxSoil: null, eMaxWater: 0.3, jp500Food: null, jp500Water: 0.04,zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "As", eMaxSoil: 0.4,  eMaxWater: 0.15,jp500Food: 0.015,jp500Water: 0.03,zMaxFood: 0.015,zMaxWater: 0.03, eLiteWater: null },
+  { element: "Se", eMaxSoil: 0.3,  eMaxWater: 0.3, jp500Food: 0.009,jp500Water: 0.015,zMaxFood: 0.009,zMaxWater: 0.01, eLiteWater: null },
+  { element: "Br", eMaxSoil: null, eMaxWater: 0.05,jp500Food: null, jp500Water: 0.015,zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Mo", eMaxSoil: null, eMaxWater: 0.04,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Pd", eMaxSoil: null, eMaxWater: 0.03,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Ag", eMaxSoil: null, eMaxWater: 0.06,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Cd", eMaxSoil: 0.06, eMaxWater: 0.04,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Sn", eMaxSoil: null, eMaxWater: 0.08,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Sb", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Ba", eMaxSoil: null, eMaxWater: 5,   jp500Food: null, jp500Water: 5,   zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "W",  eMaxSoil: null, eMaxWater: 0.2, jp500Food: null, jp500Water: 0.1, zMaxFood: null, zMaxWater: 0.1,  eLiteWater: null },
+  { element: "Hg", eMaxSoil: 0.5,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.02, zMaxWater: 0.03, eLiteWater: null },
+  { element: "Tl", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: 0.03, eLiteWater: null },
+  { element: "Pb", eMaxSoil: 0.8,  eMaxWater: 0.15,jp500Food: 0.03, jp500Water: 0.04,zMaxFood: 0.03, zMaxWater: 0.03, eLiteWater: null },
+  { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
 ].sort((a, b) => a.element.localeCompare(b.element));
+
 
 // Function to determine heatmap color based on value and requirement
 const getDynamicHeatmapColour = (value, requirement) => {
@@ -66,8 +81,10 @@ export default function App() {
     { key: "zMaxFood", label: "Z-Max (Food)" },
     { key: "zMaxWater", label: "Z-Max (Water)" },
     { key: "jp500Food", label: "JP500 (Food)" },
+    { key: "jp500Water", label: "JP500 (Water)" },
     { key: "eMax500Soil", label: "E-Max 500 (Soil)" },
-    { key: "eMax500Water", label: "E-Max 500 (Water)" }
+    { key: "eMax500Water", label: "E-Max 500 (Water)" },
+    { key: "eLiteWater", label: "E-Lite (Water)" }
   ];
 
   // Function to render content based on active tab
@@ -94,7 +111,7 @@ export default function App() {
                       step="0.001"
                       value={currentRequirement}
                       onChange={(e) => updateRequirement(element.element, e.target.value)}
-                      className="border p-2 rounded w-full"
+                      className="border p-2 rounded w-full h-12"
                       placeholder="Enter requirement"
                     />
                   </CardContent>
@@ -147,14 +164,14 @@ export default function App() {
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         style={{
-          width: "clamp(50px, 10vw, 150px)", // Smaller range for mobile
-          height: "auto",
-          top: "1rem",
-          right: "1rem",
-          margin: 0,
-          padding: 0,
+          width: "clamp(100px, 20vw, 200px)", // Responsive width
+          height: "auto", // Maintain aspect ratio
+          margin: "0 auto", // Center horizontally
+          display: "block", // Ensure it's treated as a block element
+          position: "relative", // Ensure proper stacking context
+          zIndex: 50, // Higher than other elements
         }}
-        className="absolute object-contain z-10"
+        className="mt-4"
       />
 
       {/* Main Content */}
