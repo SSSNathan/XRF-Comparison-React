@@ -40,6 +40,7 @@ const elementsData = [
   { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
+
 // Function to determine heatmap color based on value and requirement
 const getDynamicHeatmapColour = (value, requirement) => {
   if (value === null || value === undefined) return "bg-gray-200";
