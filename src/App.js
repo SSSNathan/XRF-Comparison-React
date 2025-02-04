@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
+import React, { useState, useEffect } from "react";
 
 // Sorted elements data (name field omitted as not provided)
 const elementsData = [
