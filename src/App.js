@@ -48,7 +48,7 @@ const getDynamicHeatmapColour = (value, requirement) => {
 
   const parsedRequirement = parseFloat(requirement);
   if (isNaN(parsedRequirement)) return "bg-gray-200";
-
+  if (value === null || value === undefined) return "bg-red-500"; // Fail if LoD missing
   if (value < parsedRequirement) return "bg-green-500";
   if (value <= parsedRequirement + 0.01) return "bg-yellow-400";
   return "bg-red-500";
@@ -164,14 +164,14 @@ export default function App() {
         src={`${process.env.PUBLIC_URL}/topRightImage.png`}
         alt="Top Right"
         style={{
-          width: "clamp(100px, 20vw, 200px)", // Responsive width
-          height: "auto", // Maintain aspect ratio
-          margin: "0 auto", // Center horizontally
-          display: "block", // Ensure it's treated as a block element
-          position: "relative", // Ensure proper stacking context
-          zIndex: 50, // Higher than other elements
+          width: "clamp(100px, 20vw, 200px)",
+          height: "auto",
+          position: "absolute",
+          top: 0,
+          right: 0,
+          zIndex: 50,
         }}
-        className="mt-4"
+        className="hidden sm:block"  // Hidden on mobile
       />
 
       {/* Main Content */}
@@ -204,16 +204,15 @@ export default function App() {
         style={{
           backgroundImage: `url(${process.env.PUBLIC_URL}/footerImage.png)`,
           backgroundRepeat: "no-repeat",
-          backgroundSize: "contain", // Scale the image naturally
-          backgroundPosition: "center bottom", // Ensure it's at the bottom
-          position: "absolute", // Anchors it relative to the parent
-          bottom: 0, // Locks it to the bottom
+          backgroundSize: "contain",
+          backgroundPosition: "center bottom",
+          position: "fixed",
+          bottom: 0,
           left: 0,
           right: 0,
-          height: "300px", // Set the desired height of the footer image
-          zIndex: -1, // Ensure it's behind everything
+          height: "300px",
+          zIndex: -1,
         }}
       />
-    </div>
   );
 }
