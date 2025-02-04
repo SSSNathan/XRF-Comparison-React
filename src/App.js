@@ -214,5 +214,6 @@ export default function App() {
           zIndex: -1,
         }}
       />
+    </div>
   );
 }
