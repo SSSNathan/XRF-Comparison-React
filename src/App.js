@@ -94,7 +94,7 @@ export default function App() {
                       step="0.001"
                       value={currentRequirement}
                       onChange={(e) => updateRequirement(element.element, e.target.value)}
-                      className="border p-2 rounded w-full"
+                      className="border p-2 rounded w-full h-12"
                       placeholder="Enter requirement"
                     />
                   </CardContent>
