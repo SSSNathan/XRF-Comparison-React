@@ -1,56 +1,46 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Canvas } from "@react-three/fiber";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-// Sorted elements data (name field omitted as it's not provided)
+// Sorted elements data (name field omitted as not provided)
 const elementsData = [
-  { element: "Al", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 20 },
-  { element: "As", eMaxSoil: 0.4,  eMaxWater: 0.15, jp500Food: 0.015, jp500Water: 0.03, zMaxFood: 0.015, zMaxWater: 0.03, eLiteWater: null },
-  { element: "Ba", eMaxSoil: null, eMaxWater: 5,    jp500Food: null, jp500Water: 5,    zMaxFood: null, zMaxWater: null, eLiteWater: null },
-  { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2,  jp500Food: 0.015, jp500Water: 0.04, zMaxFood: 0.015, zMaxWater: null, eLiteWater: null },
-  { element: "Br", eMaxSoil: null, eMaxWater: 0.05, jp500Food: null, jp500Water: 0.015, zMaxFood: null, zMaxWater: null, eLiteWater: null },
-  { element: "Ca", eMaxSoil: null, eMaxWater: 200, jp500Food: null, jp500Water: 15,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.05 },
-  { element: "Cd", eMaxSoil: 0.06, eMaxWater: 0.04, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
-  { element: "Cl", eMaxSoil: null, eMaxWater: 500, jp500Food: null, jp500Water: 30,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.3 },
-  { element: "Co", eMaxSoil: 16,   eMaxWater: 0.5,  jp500Food: 0.03, jp500Water: 0.07, zMaxFood: 0.03, zMaxWater: 0.05, eLiteWater: null },
-  { element: "Cr", eMaxSoil: 4,    eMaxWater: 4,    jp500Food: 0.1,  jp500Water: 0.3,  zMaxFood: 0.1,  zMaxWater: 0.2,  eLiteWater: null },
-  { element: "Cu", eMaxSoil: 1,    eMaxWater: 1,    jp500Food: 0.025, jp500Water: 0.05, zMaxFood: 0.025, zMaxWater: 0.1,  eLiteWater: null },
-  { element: "Fe", eMaxSoil: null, eMaxWater: 2,    jp500Food: null, jp500Water: 0.1,  zMaxFood: null, zMaxWater: 0.1,  eLiteWater: null },
-  { element: "Hg", eMaxSoil: 0.5,  eMaxWater: 0.2,  jp500Food: 0.015, jp500Water: 0.04, zMaxFood: 0.02, zMaxWater: 0.03, eLiteWater: null },
-  { element: "K",  eMaxSoil: null, eMaxWater: 300,  jp500Food: null, jp500Water: 20,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.1 },
-  { element: "Mg", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 40 },
-  { element: "Mn", eMaxSoil: 3,    eMaxWater: 3,    jp500Food: 0.1,  jp500Water: 0.2,  zMaxFood: 0.1,  zMaxWater: 0.2,  eLiteWater: null },
-  { element: "Mo", eMaxSoil: null, eMaxWater: 0.04, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
   { element: "Na", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 100 },
-  { element: "Ni", eMaxSoil: 1,    eMaxWater: 1,    jp500Food: 0.03, jp500Water: 0.05, zMaxFood: 0.03, zMaxWater: 0.05, eLiteWater: null },
-  { element: "P",  eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: 100, zMaxFood: null, zMaxWater: null, eLiteWater: 1.5 },
-  { element: "Pb", eMaxSoil: 0.8,  eMaxWater: 0.15, jp500Food: 0.03, jp500Water: 0.04, zMaxFood: 0.03, zMaxWater: 0.03, eLiteWater: null },
-  { element: "Sb", eMaxSoil: 0.4,  eMaxWater: 0.2,  jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
-  { element: "Se", eMaxSoil: 0.3,  eMaxWater: 0.3,  jp500Food: 0.009, jp500Water: 0.015, zMaxFood: 0.009, zMaxWater: 0.01, eLiteWater: null },
+  { element: "Mg", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 40 },
+  { element: "Al", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 20 },
   { element: "Si", eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: 5 },
-  { element: "Sn", eMaxSoil: null, eMaxWater: 0.08, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "P",  eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: 100, zMaxFood: null, zMaxWater: null, eLiteWater: 1.5 },
   { element: "S",  eMaxSoil: null, eMaxWater: null, jp500Food: null, jp500Water: 50,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.6 },
-  { element: "Ti", eMaxSoil: null, eMaxWater: 20,   jp500Food: null, jp500Water: 1,   zMaxFood: null, zMaxWater: null, eLiteWater: null },
-  { element: "Tl", eMaxSoil: 0.4,  eMaxWater: 0.2,  jp500Food: 0.015, jp500Water: 0.04, zMaxFood: 0.015, zMaxWater: 0.03, eLiteWater: null },
-  { element: "V",  eMaxSoil: null, eMaxWater: 8,    jp500Food: null, jp500Water: 0.5,  zMaxFood: null, zMaxWater: null, eLiteWater: null },
-  { element: "W",  eMaxSoil: null, eMaxWater: 0.2,  jp500Food: null, jp500Water: 0.1,  zMaxFood: null, zMaxWater: 0.1, eLiteWater: null },
-  { element: "Zn", eMaxSoil: 0.7,  eMaxWater: 0.3,  jp500Food: 0.025, jp500Water: 0.04, zMaxFood: 0.025, zMaxWater: 0.05, eLiteWater: null },
-];
+  { element: "Cl", eMaxSoil: null, eMaxWater: 500, jp500Food: null, jp500Water: 30,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.3 },
+  { element: "K",  eMaxSoil: null, eMaxWater: 300, jp500Food: null, jp500Water: 20,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.1 },
+  { element: "Ca", eMaxSoil: null, eMaxWater: 200, jp500Food: null, jp500Water: 15,  zMaxFood: null, zMaxWater: null, eLiteWater: 0.05 },
+  { element: "Ti", eMaxSoil: null, eMaxWater: 20,  jp500Food: null, jp500Water: 1,   zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "V",  eMaxSoil: null, eMaxWater: 8,   jp500Food: null, jp500Water: 0.5, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Cr", eMaxSoil: 4,    eMaxWater: 4,   jp500Food: 0.1,  jp500Water: 0.3, zMaxFood: 0.1,  zMaxWater: 0.2,  eLiteWater: null },
+  { element: "Mn", eMaxSoil: 3,    eMaxWater: 3,   jp500Food: 0.1,  jp500Water: 0.2, zMaxFood: 0.1,  zMaxWater: 0.2,  eLiteWater: null },
+  { element: "Fe", eMaxSoil: null, eMaxWater: 2,   jp500Food: null, jp500Water: 0.1, zMaxFood: null, zMaxWater: 0.1,  eLiteWater: null },
+  { element: "Co", eMaxSoil: 16,   eMaxWater: 0.5, jp500Food: 0.03, jp500Water: 0.07,zMaxFood: 0.03, zMaxWater: 0.05, eLiteWater: null },
+  { element: "Ni", eMaxSoil: 1,    eMaxWater: 1,   jp500Food: 0.03, jp500Water: 0.05,zMaxFood: 0.03, zMaxWater: 0.05, eLiteWater: null },
+  { element: "Cu", eMaxSoil: 1,    eMaxWater: 1,   jp500Food: 0.025,jp500Water: 0.05,zMaxFood: 0.025,zMaxWater: 0.1,  eLiteWater: null },
+  { element: "Zn", eMaxSoil: 0.7,  eMaxWater: 0.3, jp500Food: 0.025,jp500Water: 0.04,zMaxFood: 0.025,zMaxWater: 0.05, eLiteWater: null },
+  { element: "Ge", eMaxSoil: null, eMaxWater: 0.3, jp500Food: null, jp500Water: 0.04,zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "As", eMaxSoil: 0.4,  eMaxWater: 0.15,jp500Food: 0.015,jp500Water: 0.03,zMaxFood: 0.015,zMaxWater: 0.03, eLiteWater: null },
+  { element: "Se", eMaxSoil: 0.3,  eMaxWater: 0.3, jp500Food: 0.009,jp500Water: 0.015,zMaxFood: 0.009,zMaxWater: 0.01, eLiteWater: null },
+  { element: "Br", eMaxSoil: null, eMaxWater: 0.05,jp500Food: null, jp500Water: 0.015,zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Mo", eMaxSoil: null, eMaxWater: 0.04,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Pd", eMaxSoil: null, eMaxWater: 0.03,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Ag", eMaxSoil: null, eMaxWater: 0.06,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Cd", eMaxSoil: 0.06, eMaxWater: 0.04,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Sn", eMaxSoil: null, eMaxWater: 0.08,jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Sb", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: null, jp500Water: null, zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "Ba", eMaxSoil: null, eMaxWater: 5,   jp500Food: null, jp500Water: 5,   zMaxFood: null, zMaxWater: null, eLiteWater: null },
+  { element: "W",  eMaxSoil: null, eMaxWater: 0.2, jp500Food: null, jp500Water: 0.1, zMaxFood: null, zMaxWater: 0.1,  eLiteWater: null },
+  { element: "Hg", eMaxSoil: 0.5,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.02, zMaxWater: 0.03, eLiteWater: null },
+  { element: "Tl", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: 0.03, eLiteWater: null },
+  { element: "Pb", eMaxSoil: 0.8,  eMaxWater: 0.15,jp500Food: 0.03, jp500Water: 0.04,zMaxFood: 0.03, zMaxWater: 0.03, eLiteWater: null },
+  { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
+].sort((a, b) => a.element.localeCompare(b.element));
 
-// Utility to determine heatmap colour
+// Utility function to determine heatmap colour
 const getDynamicHeatmapColour = (value, requirement) => {
   if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
   if (value === undefined || value === null) return "bg-red-500";
@@ -61,175 +51,168 @@ const getDynamicHeatmapColour = (value, requirement) => {
   return "bg-red-500";
 };
 
-// --- New Components ---
+// Define a mapping for instruments used in the AI recommendation.
+// For each instrument, specify which property key to use for Water and for Solid (non-water) samples.
+const instrumentMapping = [
+  {
+    name: "JP500",
+    waterKey: "jp500Water",
+    solidKey: "jp500Food",
+  },
+  {
+    name: "Z-Max",
+    waterKey: "zMaxWater",
+    solidKey: "zMaxFood",
+  },
+  {
+    name: "E-Max 500",
+    waterKey: "eMax500Water",
+    solidKey: "eMax500Soil",
+  },
+  {
+    name: "E-Lite",
+    waterKey: "eLiteWater",
+    solidKey: null, // No solid version available
+  },
+];
 
-// Comparison Chart using react-chartjs-2
-function ComparisonChart({ elementsData, requirements }) {
-  const [selectedInstrument, setSelectedInstrument] = useState("jp500Food");
-  const labels = elementsData.map((e) => e.element);
-  const instrumentData = elementsData.map((e) => {
-    const value = e[selectedInstrument];
-    return value !== null && value !== undefined ? parseFloat(value) : 0;
-  });
-  const requirementData = elementsData.map((e) => {
-    const req = requirements.find((r) => r.element === e.element);
-    return req && req.requirement ? parseFloat(req.requirement) : 0;
-  });
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: selectedInstrument,
-        data: instrumentData,
-        backgroundColor: "rgba(54, 162, 235, 0.5)",
-      },
-      {
-        label: "Requirement",
-        data: requirementData,
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-      },
-    ],
-  };
-
-  return (
-    <div>
-      <div className="mb-4">
-        <label className="mr-2">Select Instrument:</label>
-        <select
-          value={selectedInstrument}
-          onChange={(e) => setSelectedInstrument(e.target.value)}
-          className="border p-2 rounded"
-        >
-          <option value="jp500Food">JP500 (Food)</option>
-          <option value="jp500Water">JP500 (Water)</option>
-          <option value="zMaxFood">Z-Max (Food)</option>
-          <option value="zMaxWater">Z-Max (Water)</option>
-          <option value="eMax500Soil">E-Max 500 (Soil)</option>
-          <option value="eMax500Water">E-Max 500 (Water)</option>
-          <option value="eLiteWater">E-Lite (Water)</option>
-        </select>
-      </div>
-      <Bar
-        data={data}
-        options={{
-          responsive: true,
-          plugins: {
-            legend: { position: "top" },
-            title: { display: true, text: `Comparison Chart - ${selectedInstrument}` },
-          },
-        }}
-      />
-    </div>
-  );
-}
-
-// 3D Visualisation using react-three-fibre
-function ThreeDVisualisation() {
-  return (
-    <Canvas style={{ height: "400px", background: "#272727" }}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <mesh rotation={[0.5, 0.5, 0]}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-    </Canvas>
-  );
-}
-
-// AI-Driven Recommendations
-function AIRecommendations({ elementsData, requirements }) {
-  const instruments = [
-    "jp500Food",
-    "jp500Water",
-    "zMaxFood",
-    "zMaxWater",
-    "eMax500Soil",
-    "eMax500Water",
-    "eLiteWater",
-  ];
-  const scores = instruments.map((instr) => {
-    let score = 0;
-    elementsData.forEach((e) => {
-      const reqObj = requirements.find((r) => r.element === e.element);
+// AI Recommendations component – calculates, per instrument, the number of elements
+// for which the spec meets the customer requirement versus fails, using the selected matrix.
+function AIRecommendations({ elementsData, requirements, selectedMatrix }) {
+  const results = instrumentMapping.map(instr => {
+    let matches = 0;
+    let fails = 0;
+    let total = 0;
+    const key = selectedMatrix === "Water" ? instr.waterKey : instr.solidKey;
+    if (!key) {
+      return { instrument: instr.name, matches: 0, fails: 0, total: 0, notApplicable: true };
+    }
+    elementsData.forEach(e => {
+      const reqObj = requirements.find(r => r.element === e.element);
       if (reqObj && reqObj.requirement) {
+        total++;
         const reqVal = parseFloat(reqObj.requirement);
-        const specVal = e[instr];
-        if (specVal !== null && specVal !== undefined && specVal < reqVal) {
-          score += 1;
+        const specVal = e[key];
+        if (specVal === null || specVal === undefined) {
+          fails++;
+        } else if (parseFloat(specVal) < reqVal) {
+          matches++;
+        } else {
+          fails++;
         }
       }
     });
-    return { instrument: instr, score };
+    return { instrument: instr.name, matches, fails, total, notApplicable: false };
   });
-  scores.sort((a, b) => b.score - a.score);
-  const recommendation = scores[0] ? scores[0].instrument : "N/A";
+
+  // Pick the instrument with the highest net score (matches minus fails)
+  let bestInstrument = null;
+  let bestScore = -Infinity;
+  results.forEach(result => {
+    if (result.notApplicable) return;
+    const score = result.matches - result.fails;
+    if (score > bestScore) {
+      bestScore = score;
+      bestInstrument = result.instrument;
+    }
+  });
 
   return (
-    <div className="p-4 bg-white shadow-lg rounded">
-      <h2 className="text-xl font-semibold mb-2">AI Recommendation</h2>
-      <p>
-        Based on your requirements, we recommend the <strong>{recommendation}</strong> instrument.
+    <div className="space-y-4">
+      <h2 className="text-3xl font-bold text-center">AI Recommendations</h2>
+      <p className="text-lg text-center">
+        Sample Matrix: <span className="font-semibold">{selectedMatrix}</span>
       </p>
-      <ul className="mt-2">
-        {scores.map((item) => (
-          <li key={item.instrument}>
-            {item.instrument}: {item.score} matches
-          </li>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        {results.map(result => (
+          <Card key={result.instrument} className="p-4 border rounded-lg bg-white shadow-lg">
+            <CardContent>
+              <h3 className="text-2xl font-semibold">{result.instrument}</h3>
+              {result.notApplicable ? (
+                <p className="text-gray-600">Not available for {selectedMatrix} samples.</p>
+              ) : (
+                <>
+                  <p className="mt-2">Matches: <span className="font-bold">{result.matches}</span> / {result.total}</p>
+                  <p className="mt-1">Fails: <span className="font-bold">{result.fails}</span></p>
+                  {bestInstrument === result.instrument && (
+                    <p className="mt-2 text-green-600 font-bold">Recommended!</p>
+                  )}
+                </>
+              )}
+            </CardContent>
+          </Card>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
 
-// --- Main App Component ---
+// Main App Component
 export default function App() {
+  // Manage active tab, requirements, and the selected sample matrix.
   const [activeTab, setActiveTab] = useState("CustomerSpec");
   const [requirements, setRequirements] = useState([]);
+  const [selectedMatrix, setSelectedMatrix] = useState("Water"); // "Water" or "Solid"
 
-  // Update a requirement for an element
+  // Update a requirement for a given element.
   const updateRequirement = (element, newRequirement) => {
-    setRequirements((prev) => {
-      const existing = prev.find((req) => req.element === element);
+    setRequirements(prev => {
+      const existing = prev.find(req => req.element === element);
       if (existing) {
-        return prev.map((req) =>
-          req.element === element ? { ...req, requirement: newRequirement } : req
-        );
+        return prev.map(req => (req.element === element ? { ...req, requirement: newRequirement } : req));
       } else {
         return [...prev, { element, requirement: newRequirement }];
       }
     });
   };
 
-  // Define the tabs (removed AR Viewer)
+  // Define tabs. The original instrument spec pages (which use a heatmap) are preserved,
+  // and an additional "AI Recommendations" tab is added.
   const tabs = [
     { key: "CustomerSpec", label: "Customer Spec" },
-    { key: "ComparisonChart", label: "Comparison Chart" },
-    { key: "ThreeDVisualisation", label: "3D Visualisation" },
+    { key: "zMaxFood", label: "Z-Max (Food)" },
+    { key: "zMaxWater", label: "Z-Max (Water)" },
+    { key: "jp500Food", label: "JP500 (Food)" },
+    { key: "jp500Water", label: "JP500 (Water)" },
+    { key: "eMax500Soil", label: "E-Max 500 (Soil)" },
+    { key: "eMax500Water", label: "E-Max 500 (Water)" },
+    { key: "eLiteWater", label: "E-Lite (Water)" },
     { key: "AIRecommendations", label: "AI Recommendations" },
   ];
 
-  // Render content based on the active tab
+  // Render content based on the active tab.
   const renderContent = () => {
+    const commonGridClasses = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10";
+
     if (activeTab === "CustomerSpec") {
       return (
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Set Your LoD Requirements</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
-            {elementsData.map((element) => {
+        <div className="space-y-6">
+          <h2 className="text-3xl font-semibold">Set Your LoD Requirements</h2>
+          {/* Global matrix selection */}
+          <div className="mb-4">
+            <label className="mr-2 font-semibold">Select Sample Matrix:</label>
+            <select
+              value={selectedMatrix}
+              onChange={e => setSelectedMatrix(e.target.value)}
+              className="border p-2 rounded"
+            >
+              <option value="Water">Water</option>
+              <option value="Solid">Solid</option>
+            </select>
+          </div>
+          <div className={commonGridClasses}>
+            {elementsData.map(element => {
               const currentRequirement =
-                requirements.find((req) => req.element === element.element)?.requirement || "";
+                requirements.find(req => req.element === element.element)?.requirement || "";
               return (
                 <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
                   <CardContent>
-                    <h2 className="text-xl font-semibold mb-2">
-                      {element.element}
-                    </h2>
+                    <h3 className="text-2xl font-semibold mb-2">{element.element}</h3>
                     <input
                       type="number"
                       step="0.001"
                       value={currentRequirement}
-                      onChange={(e) => updateRequirement(element.element, e.target.value)}
+                      onChange={e => updateRequirement(element.element, e.target.value)}
                       className="border p-2 rounded w-full h-12"
                       placeholder="Enter requirement"
                     />
@@ -240,14 +223,37 @@ export default function App() {
           </div>
         </div>
       );
-    } else if (activeTab === "ComparisonChart") {
-      return <ComparisonChart elementsData={elementsData} requirements={requirements} />;
-    } else if (activeTab === "ThreeDVisualisation") {
-      return <ThreeDVisualisation />;
     } else if (activeTab === "AIRecommendations") {
-      return <AIRecommendations elementsData={elementsData} requirements={requirements} />;
+      return <AIRecommendations elementsData={elementsData} requirements={requirements} selectedMatrix={selectedMatrix} />;
+    } else {
+      // For instrument spec tabs: display cards with a heatmap that compares each instrument's LoD to the customer requirement.
+      return (
+        <div className="space-y-6">
+          <h2 className="text-3xl font-semibold">Instrument LoD vs Customer Requirement</h2>
+          <div className={commonGridClasses}>
+            {elementsData.map(element => {
+              const requirement = requirements.find(req => req.element === element.element)?.requirement;
+              const specValue = element[activeTab];
+              return (
+                <Card key={element.element} className="p-4 border rounded-lg bg-white shadow-lg">
+                  <CardContent>
+                    <h3 className="text-2xl font-semibold mb-2">{element.element}</h3>
+                    <div className={`h-12 w-full rounded ${getDynamicHeatmapColour(specValue, requirement)}`}>
+                      <p className="text-center pt-2 text-white font-bold">
+                        {specValue !== null && specValue !== undefined ? specValue : "N/A"}
+                      </p>
+                    </div>
+                    {requirement && (
+                      <p className="mt-2 text-sm text-gray-700">Requirement: {requirement}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      );
     }
-    return null;
   };
 
   return (
@@ -268,14 +274,13 @@ export default function App() {
       />
 
       {/* Main Content */}
-      <div className="p-6 space-y-4">
-        <h1 className="text-2xl font-bold" style={{ color: "#191919" }}>
+      <div className="p-6 space-y-6">
+        <h1 className="text-4xl font-bold" style={{ color: "#191919" }}>
           Z-Spec Instrument Sensitivity Comparison
         </h1>
-
         {/* Tabs */}
         <div className="flex flex-wrap gap-2">
-          {tabs.map((tab) => (
+          {tabs.map(tab => (
             <Button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
@@ -285,7 +290,6 @@ export default function App() {
             </Button>
           ))}
         </div>
-
         {/* Render Content Based on Active Tab */}
         {renderContent()}
       </div>
