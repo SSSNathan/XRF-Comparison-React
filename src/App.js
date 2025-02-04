@@ -41,14 +41,20 @@ const elementsData = [
 ].sort((a, b) => a.element.localeCompare(b.element));
 
 
-// Function to determine heatmap color based on value and requirement
 const getDynamicHeatmapColour = (value, requirement) => {
-  if (value === null || value === undefined) return "bg-gray-200";
-  if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
-
+  // If no requirement provided, show grey.
+  if (requirement === undefined || requirement === null || requirement === "") {
+    return "bg-gray-200";
+  }
+  
+  // If requirement exists but the value is missing, mark red.
+  if (value === undefined || value === null) {
+    return "bg-red-500";
+  }
+  
   const parsedRequirement = parseFloat(requirement);
   if (isNaN(parsedRequirement)) return "bg-gray-200";
-  if (value === null || value === undefined) return "bg-red-500"; // Fail if LoD missing
+  
   if (value < parsedRequirement) return "bg-green-500";
   if (value <= parsedRequirement + 0.01) return "bg-yellow-400";
   return "bg-red-500";
