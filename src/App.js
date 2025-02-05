@@ -40,28 +40,24 @@ const elementsData = [
   { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
-// Utility: returns a Tailwind background colour based on the comparison of spec vs requirement.
-const getDynamicHeatmapColour = (value, requirement) => {
-  if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
-  if (value === undefined || value === null) return "bg-red-500";
-  const parsedRequirement = parseFloat(requirement);
-  if (isNaN(parsedRequirement)) return "bg-gray-200";
-  if (value < parsedRequirement) return "bg-green-500";
-  if (value <= parsedRequirement + 0.01) return "bg-yellow-400";
-  return "bg-red-500";
-};
-
-// Mapping for instruments and their property keys.
+// Instrument mapping for water and solid keys.
 const instrumentMapping = [
   { name: "JP500", waterKey: "jp500Water", solidKey: "jp500Food" },
   { name: "Z-Max", waterKey: "zMaxWater", solidKey: "zMaxFood" },
-  { name: "E-Max 500", waterKey: "eMaxWater", solidKey: "eMaxSoil" },
-  { name: "E-Lite", waterKey: "eLiteWater", solidKey: null } // Not available in Solid
+  { name: "E-Max", waterKey: "eMaxWater", solidKey: "eMaxSoil" },
+  { name: "E-Lite", waterKey: "eLiteWater", solidKey: null }
 ];
 
-// Recommendation Component (renamed and updated)
-function Recommendation({ elementsData, requirements, selectedMatrix }) {
-  // Calculate per-instrument scores.
+// Helper function: given an instrument name and selected matrix, return the appropriate tab key.
+const getInstrumentTabKey = (instrumentName, selectedMatrix) => {
+  const instr = instrumentMapping.find(i => i.name === instrumentName);
+  if (!instr) return null;
+  return selectedMatrix === "Water" ? instr.waterKey : instr.solidKey;
+};
+
+// Recommendation component with clickable match blocks.
+function Recommendation({ elementsData, requirements, selectedMatrix, onSelectInstrument }) {
+  // Calculate scores for each instrument.
   const results = instrumentMapping.map(instr => {
     let matches = 0, fails = 0, total = 0;
     const key = selectedMatrix === "Water" ? instr.waterKey : instr.solidKey;
@@ -77,6 +73,7 @@ function Recommendation({ elementsData, requirements, selectedMatrix }) {
         if (specVal === null || specVal === undefined) {
           fails++;
         } else if (parseFloat(specVal) <= reqVal) {
+          // Count equal values as a pass.
           matches++;
         } else {
           fails++;
@@ -86,21 +83,21 @@ function Recommendation({ elementsData, requirements, selectedMatrix }) {
     return { instrument: instr.name, matches, fails, total, net: matches - fails, notApplicable: false };
   });
 
-  // Determine the best (highest) net score.
+  // Find the best net score.
   let bestScore = -Infinity;
   results.forEach(result => {
     if (!result.notApplicable && result.net > bestScore) {
       bestScore = result.net;
     }
   });
-  // Recommended instruments are those whose net score equals bestScore.
-  const recommendedInstruments = results.filter(
-    result => !result.notApplicable && result.net === bestScore
-  ).map(r => r.instrument);
+  // Recommended instruments: those whose net score equals bestScore.
+  const recommendedInstruments = results
+    .filter(result => !result.notApplicable && result.net === bestScore)
+    .map(r => r.instrument);
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-center">Recommendation</h2>
+      <h2 className="text-3xl font-bold text-center">Instrument Recommendation</h2>
       <p className="text-lg text-center">
         Sample Matrix: <span className="font-semibold">{selectedMatrix}</span>
       </p>
@@ -120,18 +117,22 @@ function Recommendation({ elementsData, requirements, selectedMatrix }) {
                     Fails: <span className="font-bold">{result.fails}</span>
                   </p>
                   {result.fails === 0 && (
-                    // Instrument with 0 fails is a Perfect Match (green box)
-                    <div className="mt-2 bg-green-500 rounded p-2 text-white text-center font-bold">
-                      Perfect Match!
+                    <div 
+                      onClick={() => onSelectInstrument(getInstrumentTabKey(result.instrument, selectedMatrix))}
+                      className="mt-2 cursor-pointer bg-green-500 rounded p-2 text-white text-center font-bold"
+                    >
+                      Perfect Match - click for details
                     </div>
                   )}
                   {result.fails > 0 && result.fails <= 2 && (
-                    // Instrument with 1 or 2 fails is a Close Match (yellow box)
-                    <div className="mt-2 bg-yellow-400 rounded p-2 text-white text-center font-bold">
-                      Close Match!
+                    <div 
+                      onClick={() => onSelectInstrument(getInstrumentTabKey(result.instrument, selectedMatrix))}
+                      className="mt-2 cursor-pointer bg-yellow-400 rounded p-2 text-white text-center font-bold"
+                    >
+                      Close Match - click for details
                     </div>
                   )}
-                  {/* For fails > 2, no label is shown */}
+                  {/* If fails > 2, no clickable label is shown */}
                 </>
               )}
             </CardContent>
@@ -142,13 +143,13 @@ function Recommendation({ elementsData, requirements, selectedMatrix }) {
   );
 }
 
-// Main App Component
+// Main App component.
 export default function App() {
   const [activeTab, setActiveTab] = useState("CustomerSpec");
   const [requirements, setRequirements] = useState([]);
   const [selectedMatrix, setSelectedMatrix] = useState("Water"); // "Water" or "Solid"
 
-  // Update requirement value.
+  // Update requirement for an element.
   const updateRequirement = (element, newRequirement) => {
     setRequirements(prev => {
       const existing = prev.find(req => req.element === element);
@@ -160,9 +161,10 @@ export default function App() {
     });
   };
 
-  // Dynamically build the tabs based on the selected matrix.
+  // Build tabs in the desired order: Customer Requirement, Instrument Recommendation, then instrument spec pages.
   const tabs = [];
-  tabs.push({ key: "CustomerSpec", label: "Customer Spec" });
+  tabs.push({ key: "CustomerSpec", label: "Customer Requirement" });
+  tabs.push({ key: "Recommendation", label: "Instrument Recommendation" });
   instrumentMapping.forEach(instr => {
     if (selectedMatrix === "Water" && instr.waterKey) {
       tabs.push({ key: instr.waterKey, label: `${instr.name} (Water)` });
@@ -171,9 +173,8 @@ export default function App() {
       tabs.push({ key: instr.solidKey, label: `${instr.name} (Solid)` });
     }
   });
-  tabs.push({ key: "Recommendation", label: "Recommendation" });
 
-  // Ensure activeTab is valid when the matrix selection changes.
+  // Ensure activeTab is valid when matrix selection changes.
   useEffect(() => {
     if (!tabs.find(tab => tab.key === activeTab)) {
       setActiveTab("CustomerSpec");
@@ -193,7 +194,7 @@ export default function App() {
             <select
               value={selectedMatrix}
               onChange={e => setSelectedMatrix(e.target.value)}
-              className="border p-2 rounded"
+              className="bg-purple-800 text-white border border-purple-800 p-2 rounded w-48"
             >
               <option value="Water">Water</option>
               <option value="Solid">Solid</option>
@@ -227,10 +228,11 @@ export default function App() {
           elementsData={elementsData}
           requirements={requirements}
           selectedMatrix={selectedMatrix}
+          onSelectInstrument={(key) => setActiveTab(key)}
         />
       );
     } else {
-      // Instrument spec page: display cards with a heatmap showing spec vs customer requirement.
+      // Instrument spec page: display cards with a heatmap comparing spec vs customer requirement.
       return (
         <div className="space-y-6">
           <h2 className="text-3xl font-semibold">Instrument LoD vs Customer Requirement</h2>
@@ -298,23 +300,27 @@ export default function App() {
         {renderContent()}
       </div>
 
-      <footer className="p-4 text-base text-gray-600 text-left">
-        <p>
-          The information provided herein is the latest data from Z-Spec and represents the published Limits of Detection (LoDs) for each instrument in the specified matrices to the best of our knowledge. This tool is intended for guidance only and should not be construed as a definitive specification for your application. Prior to placing an order, please discuss your specific requirements with our technical sales team.
-        </p>
-        <p className="mt-1">
-          For further assistance, contact us at{" "}
-          <a
-            href="mailto:sales@scientificss.co.uk"
-            className="text-blue-500 font-bold underline"
-          >
-            sales@scientificss.co.uk
-          </a>.
-        </p>
-        <p className="mt-1">
-          All information is provided "as is" without any warranty, express or implied. Scientific Support Services disclaims any liability for any errors or omissions in this data and recommends that customers verify specifications prior to purchase.
-        </p>
-      </footer>
+      {/* Disclaimer Card (full width) */}
+      <div className="mx-4 my-4">
+        <Card>
+          <CardContent>
+            <footer className="p-4 text-base text-gray-600 text-left">
+              <p>
+                The information provided herein is the latest data from Z-Spec and represents the published Limits of Detection (LoDs) for each instrument in the specified matrices to the best of our knowledge. This tool is intended for guidance only and should not be construed as a definitive specification for your application. Prior to placing an order, please discuss your specific requirements with our technical sales team.
+              </p>
+              <p className="mt-1">
+                For further assistance, contact us at{" "}
+                <a href="mailto:sales@scientificss.co.uk" className="text-blue-500 font-bold underline">
+                  sales@scientificss.co.uk
+                </a>.
+              </p>
+              <p className="mt-1">
+                All information is provided "as is" without any warranty, express or implied. Scientific Support Services disclaims any liability for any errors or omissions in this data and recommends that customers verify specifications prior to purchase.
+              </p>
+            </footer>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Footer Image */}
       <div
