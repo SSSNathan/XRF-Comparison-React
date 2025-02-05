@@ -40,7 +40,7 @@ const elementsData = [
   { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
-// Utility function for heatmap colour based on spec vs requirement.
+// Utility: Returns a Tailwind background colour based on the comparison of spec vs requirement.
 const getDynamicHeatmapColour = (value, requirement) => {
   if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
   if (value === undefined || value === null) return "bg-red-500";
@@ -59,7 +59,7 @@ const instrumentMapping = [
   { name: "E-Lite", waterKey: "eLiteWater", solidKey: null }
 ];
 
-// Helper function: given an instrument name and selected matrix, return the appropriate tab key.
+// Helper function: Given an instrument name and selected matrix, return the appropriate tab key.
 const getInstrumentTabKey = (instrumentName, selectedMatrix) => {
   const instr = instrumentMapping.find(i => i.name === instrumentName);
   if (!instr) return null;
@@ -103,7 +103,7 @@ function Recommendation({ elementsData, requirements, selectedMatrix, onSelectIn
   });
   // Recommended instruments: those whose net score equals bestScore.
   const recommendedInstruments = results
-    .filter(result => !result.notApplicable && result.net === bestScore)
+    .filter(result => !result.notApplicable && result.net === bestScore && result.matches > 0)
     .map(r => r.instrument);
 
   return (
@@ -127,7 +127,8 @@ function Recommendation({ elementsData, requirements, selectedMatrix, onSelectIn
                   <p className="mt-1">
                     Fails: <span className="font-bold">{result.fails}</span>
                   </p>
-                  {result.fails === 0 && (
+                  {/* Only display labels if there is at least one match */}
+                  {result.matches > 0 && result.fails === 0 && (
                     <div 
                       onClick={() => {
                         const key = getInstrumentTabKey(result.instrument, selectedMatrix);
@@ -138,7 +139,7 @@ function Recommendation({ elementsData, requirements, selectedMatrix, onSelectIn
                       Perfect Match – click for details
                     </div>
                   )}
-                  {result.fails > 0 && result.fails <= 2 && result.matches > 0 && (
+                  {result.matches > 0 && result.fails > 0 && result.fails <= 2 && (
                     <div 
                       onClick={() => {
                         const key = getInstrumentTabKey(result.instrument, selectedMatrix);
@@ -146,10 +147,10 @@ function Recommendation({ elementsData, requirements, selectedMatrix, onSelectIn
                       }}
                       className="mt-2 cursor-pointer bg-yellow-400 rounded p-2 text-white text-center font-bold"
                     >
-                      Close Match – click for details
+                      Partial Match – click for details
                     </div>
                   )}
-                  {/* If fails > 2 or if there are 0 matches, no clickable label is shown */}
+                  {/* If no matches or too many fails, no clickable label is shown */}
                 </>
               )}
             </CardContent>
@@ -178,25 +179,34 @@ export default function App() {
     });
   };
 
-  // Build tabs in the desired order: Customer Requirement, Instrument Recommendation, then instrument spec pages.
+  // Check if at least one non-empty requirement exists.
+  const requirementsEntered = requirements.some(req => req.requirement && req.requirement.trim() !== "");
+
+  // Build tabs.
+  // If no requirements are entered, only show the "Customer Requirement" tab.
   const tabs = [];
-  tabs.push({ key: "CustomerSpec", label: "Customer Requirement" });
-  tabs.push({ key: "Recommendation", label: "Instrument Recommendation" });
-  instrumentMapping.forEach(instr => {
-    if (selectedMatrix === "Water" && instr.waterKey) {
-      tabs.push({ key: instr.waterKey, label: `${instr.name} (Water)` });
-    }
-    if (selectedMatrix === "Solid" && instr.solidKey) {
-      tabs.push({ key: instr.solidKey, label: `${instr.name} (Solid)` });
-    }
-  });
+  if (!requirementsEntered) {
+    tabs.push({ key: "CustomerSpec", label: "Customer Requirement" });
+  } else {
+    // Otherwise, show tabs in this order: Customer Requirement, Instrument Recommendation, then instrument spec pages.
+    tabs.push({ key: "CustomerSpec", label: "Customer Requirement" });
+    tabs.push({ key: "Recommendation", label: "Instrument Recommendation" });
+    instrumentMapping.forEach(instr => {
+      if (selectedMatrix === "Water" && instr.waterKey) {
+        tabs.push({ key: instr.waterKey, label: `${instr.name} (Water)` });
+      }
+      if (selectedMatrix === "Solid" && instr.solidKey) {
+        tabs.push({ key: instr.solidKey, label: `${instr.name} (Solid)` });
+      }
+    });
+  }
 
   // Ensure activeTab is valid when matrix selection changes.
   useEffect(() => {
     if (!tabs.find(tab => tab.key === activeTab)) {
       setActiveTab("CustomerSpec");
     }
-  }, [selectedMatrix]);
+  }, [selectedMatrix, requirementsEntered]);
 
   // Render content based on the active tab.
   const renderContent = () => {
@@ -317,7 +327,7 @@ export default function App() {
         {renderContent()}
       </div>
 
-      {/* Disclaimer Card (full width) */}
+      {/* Disclaimer Card (full width with white background) */}
       <div className="mx-4 my-4">
         <Card className="bg-white">
           <CardContent>
