@@ -76,7 +76,7 @@ function Recommendation({ elementsData, requirements, selectedMatrix }) {
         const specVal = e[key];
         if (specVal === null || specVal === undefined) {
           fails++;
-        } else if (parseFloat(specVal) < reqVal) {
+        } else if (parseFloat(specVal) <= reqVal) {
           matches++;
         } else {
           fails++;
