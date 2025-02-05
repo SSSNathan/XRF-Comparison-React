@@ -119,11 +119,19 @@ function Recommendation({ elementsData, requirements, selectedMatrix }) {
                   <p className="mt-1">
                     Fails: <span className="font-bold">{result.fails}</span>
                   </p>
-                  {recommendedInstruments.includes(result.instrument) && (
+                  {result.fails === 0 && (
+                    // Instrument with 0 fails is a Perfect Match (green box)
                     <div className="mt-2 bg-green-500 rounded p-2 text-white text-center font-bold">
-                      Recommended!
+                      Perfect Match!
                     </div>
                   )}
+                  {result.fails > 0 && result.fails <= 2 && (
+                    // Instrument with 1 or 2 fails is a Close Match (yellow box)
+                    <div className="mt-2 bg-yellow-400 rounded p-2 text-white text-center font-bold">
+                      Close Match!
+                    </div>
+                  )}
+                  {/* For fails > 2, no label is shown */}
                 </>
               )}
             </CardContent>
