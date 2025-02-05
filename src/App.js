@@ -55,7 +55,7 @@ const getDynamicHeatmapColour = (value, requirement) => {
 const instrumentMapping = [
   { name: "JP500", waterKey: "jp500Water", solidKey: "jp500Food" },
   { name: "Z-Max", waterKey: "zMaxWater", solidKey: "zMaxFood" },
-  { name: "E-Max 500", waterKey: "eMax500Water", solidKey: "eMax500Soil" },
+  { name: "E-Max 500", waterKey: "eMaxWater", solidKey: "eMaxSoil" },
   { name: "E-Lite", waterKey: "eLiteWater", solidKey: null } // Not available in Solid
 ];
 
