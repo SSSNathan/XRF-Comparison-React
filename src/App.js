@@ -298,20 +298,23 @@ export default function App() {
         {renderContent()}
       </div>
 
-      <footer className="p-4 text-xs text-gray-600 text-center">
+      <footer className="p-4 text-base text-gray-600 text-left">
         <p>
           The information provided herein is the latest data from Z-Spec and represents the published Limits of Detection (LoDs) for each instrument in the specified matrices to the best of our knowledge. This tool is intended for guidance only and should not be construed as a definitive specification for your application. Prior to placing an order, please discuss your specific requirements with our technical sales team.
         </p>
         <p className="mt-1">
           For further assistance, contact us at{" "}
-          <a href="mailto:sales@scientificss.co.uk" className="text-blue-500 underline">
+          <a
+            href="mailto:sales@scientificss.co.uk"
+            className="text-blue-500 font-bold underline"
+          >
             sales@scientificss.co.uk
           </a>.
         </p>
         <p className="mt-1">
           All information is provided "as is" without any warranty, express or implied. Scientific Support Services disclaims any liability for any errors or omissions in this data and recommends that customers verify specifications prior to purchase.
         </p>
-    </footer>
+      </footer>
 
       {/* Footer Image */}
       <div
