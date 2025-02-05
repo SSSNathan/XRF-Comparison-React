@@ -40,6 +40,17 @@ const elementsData = [
   { element: "Bi", eMaxSoil: 0.4,  eMaxWater: 0.2, jp500Food: 0.015,jp500Water: 0.04,zMaxFood: 0.015,zMaxWater: null, eLiteWater: null }
 ].sort((a, b) => a.element.localeCompare(b.element));
 
+// Utility function for heatmap colour based on spec vs requirement.
+const getDynamicHeatmapColour = (value, requirement) => {
+  if (requirement === undefined || requirement === null || requirement === "") return "bg-gray-200";
+  if (value === undefined || value === null) return "bg-red-500";
+  const parsedRequirement = parseFloat(requirement);
+  if (isNaN(parsedRequirement)) return "bg-gray-200";
+  if (value < parsedRequirement) return "bg-green-500";
+  if (value <= parsedRequirement + 0.01) return "bg-yellow-400";
+  return "bg-red-500";
+};
+
 // Instrument mapping for water and solid keys.
 const instrumentMapping = [
   { name: "JP500", waterKey: "jp500Water", solidKey: "jp500Food" },
@@ -55,7 +66,7 @@ const getInstrumentTabKey = (instrumentName, selectedMatrix) => {
   return selectedMatrix === "Water" ? instr.waterKey : instr.solidKey;
 };
 
-// Recommendation component with clickable match blocks.
+// Recommendation component with clickable match blocks and improved match logic.
 function Recommendation({ elementsData, requirements, selectedMatrix, onSelectInstrument }) {
   // Calculate scores for each instrument.
   const results = instrumentMapping.map(instr => {
@@ -73,7 +84,7 @@ function Recommendation({ elementsData, requirements, selectedMatrix, onSelectIn
         if (specVal === null || specVal === undefined) {
           fails++;
         } else if (parseFloat(specVal) <= reqVal) {
-          // Count equal values as a pass.
+          // Count equal or lower values as a match.
           matches++;
         } else {
           fails++;
@@ -118,21 +129,27 @@ function Recommendation({ elementsData, requirements, selectedMatrix, onSelectIn
                   </p>
                   {result.fails === 0 && (
                     <div 
-                      onClick={() => onSelectInstrument(getInstrumentTabKey(result.instrument, selectedMatrix))}
+                      onClick={() => {
+                        const key = getInstrumentTabKey(result.instrument, selectedMatrix);
+                        if (key) onSelectInstrument(key);
+                      }}
                       className="mt-2 cursor-pointer bg-green-500 rounded p-2 text-white text-center font-bold"
                     >
-                      Perfect Match - click for details
+                      Perfect Match – click for details
                     </div>
                   )}
-                  {result.fails > 0 && result.fails <= 2 && (
+                  {result.fails > 0 && result.fails <= 2 && result.matches > 0 && (
                     <div 
-                      onClick={() => onSelectInstrument(getInstrumentTabKey(result.instrument, selectedMatrix))}
+                      onClick={() => {
+                        const key = getInstrumentTabKey(result.instrument, selectedMatrix);
+                        if (key) onSelectInstrument(key);
+                      }}
                       className="mt-2 cursor-pointer bg-yellow-400 rounded p-2 text-white text-center font-bold"
                     >
-                      Close Match - click for details
+                      Close Match – click for details
                     </div>
                   )}
-                  {/* If fails > 2, no clickable label is shown */}
+                  {/* If fails > 2 or if there are 0 matches, no clickable label is shown */}
                 </>
               )}
             </CardContent>
@@ -302,7 +319,7 @@ export default function App() {
 
       {/* Disclaimer Card (full width) */}
       <div className="mx-4 my-4">
-        <Card>
+        <Card className="bg-white">
           <CardContent>
             <footer className="p-4 text-base text-gray-600 text-left">
               <p>
